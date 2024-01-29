@@ -58,43 +58,43 @@ const TeamAnalytics = ({route, navigation}) => {
                 });
                 return points;
             } break;
-            case ("High Cargo"): {
+            case ("Speaker"): {
                 const count = route.params.teamData.map((md) => {
                     return Number(md[7]) + Number(md[14]);
                 });
                 return count;
             } break;
-            case ("Mid Cargo"): {
+            case ("Amp"): {
                 const count = route.params.teamData.map((md) => {
                     return Number(md[8]) + Number(md[15]);
                 });
                 return count;
             } break;
-            case ("Low Cargo"): {
+            case ("Amplified Speaker"): {
                 const count = route.params.teamData.map((md) => {
                     return Number(md[9]) + Number(md[16]);
                 });
                 return count;
             } break;
-            case ("Misses"): {
+            case ("Speaker Misses"): {
                 const count = route.params.teamData.map((md) => {
                     return Number(md[13]) + Number(md[20]);
                 });
                 return count;
             } break;
-            case ("Docking"): {
+            case ("Amp Misses"): {
                 const count = route.params.teamData.map((md) => {
                     return 8*Number(md[5]) + 4*Number(md[6]) + 6*Number(md[21]) + 4*Number(md[22]);
                 });
                 return count;
             } break;
-            case ("Cubes"): {
+            case ("Climb"): {
                 const count = route.params.teamData.map((md) => {
                     return Number(md[7])+Number(md[8])+Number(md[9]) + Number(md[14])+Number(md[15])+Number(md[16]);
                 });
                 return count;
             } break;
-            case ("Cones"): {
+            case ("Trap"): {
                 const count = route.params.teamData.map((md) => {
                     return Number(md[10])+Number(md[11])+Number(md[12]) + Number(md[17])+Number(md[18])+Number(md[19]);
                 });
@@ -128,14 +128,12 @@ const TeamAnalytics = ({route, navigation}) => {
 
                     <Text style={styles.dataLabel}><Text style={styles.dataText}>{props.matchData[4] == 1 ? "Did" : "Did not"}</Text> taxi</Text>
                     <View style={styles.rowAlignContainer}>
-                        <Text style={styles.dataLabel}>Cube High-<Text style={styles.dataText}>{props.matchData[7]}</Text></Text>
-                        <Text style={styles.dataLabel}>Cube Mid-<Text style={styles.dataText}>{props.matchData[8]}</Text></Text>
-                        <Text style={styles.dataLabel}>Cube Low-<Text style={styles.dataText}>{props.matchData[8]}</Text></Text>
+                        <Text style={styles.dataLabel}>Speaker-<Text style={styles.dataText}>{props.matchData[8]}</Text></Text>
+                        <Text style={styles.dataLabel}>Speaker Misses-<Text style={styles.dataText}>{props.matchData[8]}</Text></Text>
                     </View>
                     <View style={styles.rowAlignContainer}>
-                        <Text style={styles.dataLabel}>Cone High-<Text style={styles.dataText}>{props.matchData[10]}</Text></Text>
-                        <Text style={styles.dataLabel}>Cone Mid-<Text style={styles.dataText}>{props.matchData[11]}</Text></Text>
-                        <Text style={styles.dataLabel}>Cone Low-<Text style={styles.dataText}>{props.matchData[12]}</Text></Text>
+                        <Text style={styles.dataLabel}>Amp-<Text style={styles.dataText}>{props.matchData[11]}</Text></Text>
+                        <Text style={styles.dataLabel}>Amp Misses-<Text style={styles.dataText}>{props.matchData[12]}</Text></Text>
                     </View>
                     <View style={styles.rowAlignContainer}>
                         <Text style={styles.dataLabel}>Miss-<Text style={styles.dataText}>{props.matchData[12]}</Text></Text>
@@ -153,21 +151,17 @@ const TeamAnalytics = ({route, navigation}) => {
                     </Text>
 
                     <View style={styles.rowAlignContainer}>
-                        <Text style={styles.dataLabel}>Cube High-<Text style={styles.dataText}>{props.matchData[14]}</Text></Text>
-                        <Text style={styles.dataLabel}>Cube Mid-<Text style={styles.dataText}>{props.matchData[15]}</Text></Text>
-                        <Text style={styles.dataLabel}>Cube Low-<Text style={styles.dataText}>{props.matchData[16]}</Text></Text>
+                        <Text style={styles.dataLabel}>Speaker-<Text style={styles.dataText}>{props.matchData[15]}</Text></Text>
+                        <Text style={styles.dataLabel}>Speaker Misses-<Text style={styles.dataText}>{props.matchData[16]}</Text></Text>
                     </View>
                     <View style={styles.rowAlignContainer}>
-                        <Text style={styles.dataLabel}>Cone High-<Text style={styles.dataText}>{props.matchData[17]}</Text></Text>
-                        <Text style={styles.dataLabel}>Cone Mid-<Text style={styles.dataText}>{props.matchData[18]}</Text></Text>
-                        <Text style={styles.dataLabel}>Cone Low-<Text style={styles.dataText}>{props.matchData[19]}</Text></Text>
+                        <Text style={styles.dataLabel}>Amp-<Text style={styles.dataText}>{props.matchData[18]}</Text></Text>
+                        <Text style={styles.dataLabel}>Amp Misses-<Text style={styles.dataText}>{props.matchData[19]}</Text></Text>
                     </View>
                     <View style={styles.rowAlignContainer}>
-                        <Text style={styles.dataLabel}>Miss-<Text style={styles.dataText}>{props.matchData[20]}</Text></Text>
                     </View>
                     <View style={styles.rowAlignContainer}>
-                        <Text style={styles.dataLabel}><Text style={styles.dataText}>{props.matchData[21] == 1 ? "Did" : "Did not"}</Text> dock</Text>
-                        <Text style={styles.dataLabel}><Text style={styles.dataText}>{props.matchData[22] == 1 ? "Did" : "Did not"}</Text> engage</Text>
+                        <Text style={styles.dataLabel}><Text style={styles.dataText}>{props.matchData[21] == 1 ? "Did" : "Did not"}</Text> Taxi</Text>
                     </View>
                 </View>
 
