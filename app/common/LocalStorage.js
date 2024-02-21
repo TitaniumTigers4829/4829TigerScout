@@ -9,7 +9,6 @@ Each round should have a hash of some kind which is used for the name of a sub-k
 most sense to use the team number, round type, and round number. It could be packed bytes as seen above, or in a more
 readable format like 4829-Q18
 */
-import * as FileSystem from 'expo-file-system';
 
 // Library imports
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -21,13 +20,8 @@ import { concurrency } from './Constants';
 
 // Constants
 const settingsKey = "@settingsKey";
-const deviceKey = "@DevicesKey";
-const otherSettingsKey = "@OtherSettingsKey";
 const cloudCacheKey = "@cloudCacheKey";
-const tbaEventCacheKey = "@tbaEventCacheKey";
-const matchCacheKey = "@matchCacheKey";
-const pitCacheKey = "@pitCacheKey";
-const delimiter = String.fromCharCode(124);
+const delimiter = String.fromCharCode(29);
 
 // Take a list of data and packs it into a string. Only works with lists numbers and strings
 // Example: [90, 4829] -> "90 4829"
@@ -54,7 +48,6 @@ const decompressData = (compressedData) => {
 // Stores data at a key. Returns false if there there was an error, returns true otherwise.
 const writeData = async (data, key) => {
     try {
-        //console.log(data)
         await AsyncStorage.setItem(key, data);
         return true;
     } catch (e) {
@@ -68,7 +61,6 @@ const readData = async (key) => {
     try {
         const data = await AsyncStorage.getItem(key);
         if (data !== null) {
-            //console.log(data)
             return data;
         }
     } catch (e) {
@@ -77,7 +69,7 @@ const readData = async (key) => {
     }
 }
 
-// Reads multiple match keys
+// Reads multipe match keys
 const readMultipleDataKeys = async (keys) => {
     try {
         const outputData = Promise.map(keys,
@@ -93,29 +85,8 @@ const readMultipleDataKeys = async (keys) => {
     }
 }
 
-
 // Deletes a key. Returns false if there was an error, returns true otherwise
 const deleteData = async (key) => {
-    if (key.slice(0, 3) == "@PD"){
-        try {
-            const data = await loadPitData(key);
-            
-            if (data !== null) {
-                if (data[16].length > 0) {
-                    const photos = data[16].toString().split(",");
-                    
-                    photos.map((photo) => {
-                        FileSystem.deleteAsync(photo);
-                    })
-                }
-                console.log(data);
-            }
-        } catch (e) {
-            console.error(e);
-            return null;
-        }
-    }
-
     try {
         await AsyncStorage.removeItem(key);
         return true;
@@ -143,32 +114,10 @@ const deleteMultipleDataKeys = async (keys) => {
 }
 
 // Takes a list of values and saves it according to conventions. Returns false if there was an error, returns true otherwise
-const savePitData = async (data) => {
-    const key = `@PD${data[2]}-${data[1]}-Pit`;
-    const serializedData = serializeData(data);
-
-    //console.log(key);
-    //console.log(serializedData);
-    return await writeData(serializedData, key);
-};
-
-// Reads the data stored at a key value. Returns false if there was an error, returns list of data otherwise.
-const loadPitData = async (key) => {
-    //console.log("PITDATA " + key);
-    const data = await readData(key);
-    if (data == false) {
-        return null;
-    } else {
-        const listData = deserializeData(data);
-        return listData;
-    }
-};
-
-// Takes a list of values and saves it according to conventions. Returns false if there was an error, returns true otherwise
 const saveMatchData = async (data) => {
     const matchTypeValues = ["Practice", "Qualifiers", "Finals"]; // Probably should be stored elsewhere
-    //console.log(data);
-    const key = `@MD${data[3]}-${matchTypeValues[data[5]]}-${data[4]}`;
+
+    const key = `@MD${data[0]}-${matchTypeValues[data[2]]}-${data[1]}`;
     const serializedData = serializeData(data);
     return await writeData(serializedData, key);
 };
@@ -184,27 +133,9 @@ const loadMatchData = async (key) => {
     }
 };
 
-//Save latest version of match meta data for reuse.
-const saveMatchCache = async (data) => {
-    const stringData = JSON.stringify(data);
-    return await writeData(stringData, matchCacheKey);
-};
-
-// Reads the latest stored version of the match meta data
-const loadMatchCache = async () => {
-    const data = await readData(matchCacheKey);
-    if (!data) return null;
-    try {
-        const parsedData = JSON.parse(data);
-        return parsedData;
-    } catch (e) {
-        return null;
-    }
-};
-
 // Helper function to only keep match keys
 const removeNonMatchKeys = (loadedKeys) => {
-    const filtered = loadedKeys.filter((keyName) => {return keyName.slice(0, 3) == "@MD" || keyName.slice(0, 3) == "@PD"});
+    const filtered = loadedKeys.filter((keyName) => {return keyName.slice(0, 3) == "@MD"});
     return filtered;
 }
 
@@ -221,41 +152,11 @@ const loadSettings = async () => {
         return null;
     }
 }
-const loadDevice = async () => {
-    const loadedDevice = await readData(deviceKey);
-    if (!loadedDevice) return null;
-
-    // This probably shouldn't even include a try function because it shouldn't accept settings that don't parse correctly
-    try {
-        const parsedSettings = JSON.parse(loadedDevice);
-        return parsedSettings;
-    } catch (e) {
-        return null;
-    }
-}
-// Helper function to load other settings
-const loadOtherSettings = async () => {
-    const loadedOtherSettings = await readData(otherSettingsKey);
-    if (!loadedOtherSettings) return null;
-
-    // This probably shouldn't even include a try function because it shouldn't accept settings that don't parse correctly
-    try {
-        const parsedSettings = JSON.parse(loadedOtherSettings);
-        //console.log(parsedSettings);
-        return parsedSettings;
-    } catch (e) {
-        return null;
-    }
-}
 
 // Helper function to save cloud cache
 const saveCloudCache = async (cloudData) => {
     const stringData = JSON.stringify(cloudData);
     return await writeData(stringData, cloudCacheKey);
-}
-const savePitCache = async (pitData) => {
-    const stringData = JSON.stringify(pitData);
-    return await writeData(stringData, pitCacheKey);
 }
 
 // Helper function to load cloud cache
@@ -269,48 +170,9 @@ const loadCloudCache = async () => {
     }
 }
 
-// Helper function to load cloud cache
-const loadPitCache = async () => {
-    const loadedPitCache = await readData(pitCacheKey);
-    try {
-        const parsedData = JSON.parse(loadedPitCache);
-        return parsedData;
-    } catch (e) {
-        return null;
-    }
-}
-
-
-// Helper function to save cloud cache
-const saveTbaEventCache = async (tbaData) => {
-    //console.log(tbaData);
-    
-    const stringData = JSON.stringify(tbaData);
-    //console.log(stringData);
-    return await writeData(stringData, tbaEventCacheKey);
-}
-
-// Helper function to load cloud cache
-const loadTbaEventCache = async () => {
-    const loadedCache = await readData(tbaEventCacheKey);
-    if (!loadedCache) return null;
-    //console.log(loadedCache);
-    try {
-        const parsedData = JSON.parse(loadedCache);
-        return parsedData;
-    } catch (e) {
-        console.error(e);
-        return null;
-    }
-}
-
 // Exports
 export { 
     settingsKey,
-    deviceKey,
-    otherSettingsKey,
-    matchCacheKey,
-    tbaEventCacheKey,
     cloudCacheKey,
     delimiter,
     readData,
@@ -322,20 +184,10 @@ export {
     decompressData,
     saveMatchData,
     loadMatchData,
-    loadDevice,
     deleteData,
     deleteMultipleDataKeys,
     removeNonMatchKeys,
     loadSettings,
-    loadOtherSettings,
     saveCloudCache,
-    savePitCache,
-    saveTbaEventCache,
-    loadTbaEventCache,
     loadCloudCache,
-    loadMatchCache,
-    saveMatchCache,
-    savePitData,
-    loadPitCache,
-    loadPitData,
 }

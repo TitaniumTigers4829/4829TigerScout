@@ -7,21 +7,20 @@ import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 // Component imports
 import { vh, vw, fU } from '../../common/Constants';
 import { globalButtonStyles, globalInputStyles, globalTextStyles, globalContainerStyles } from '../../common/GlobalStyleSheet';
-import { readStringFromCloud, initializeFirebaseFromSettings, getAllFilesFromCloud, downloadAllFilesFromCloud, downloadPitFilesFromCloud, uploadMultipleStringsToCloud } from '../../common/CloudStorage';
+import { readStringFromCloud, initializeFirebaseFromSettings, getAllFilesFromCloud, downloadAllFilesFromCloud, uploadMultipleStringsToCloud } from '../../common/CloudStorage';
 import { TTButton, TTSimpleCheckbox } from '../components/ButtonComponents';
 import { TTGradient, TTLoading } from '../components/ExtraComponents';
-import { loadCloudCache, loadPitCache, loadSettings, saveCloudCache, savePitCache, loadTbaEventCache } from '../../common/LocalStorage';
+import { loadCloudCache, loadSettings, saveCloudCache } from '../../common/LocalStorage';
 import { ColorScheme as CS } from '../../common/ColorScheme';
-import { TTDropdown, TTCounterInput, TTNumberInput } from '../components/InputComponents';
+import { TTDropdown } from '../components/InputComponents';
 
-const sortableValues = ["Team Number", "Total Points","Auto Points", "Teleop Points", "Misses", "Speaker", "Amp", "Endgame Points"];
-const sortableKeys = [null, "total","auto", "teleop", "misses", "speaker", "amp", "endgame"];
+const sortableValues = ["Team Number", "Auto Points", "Teleop Points", "Misses", "Cubes", "Cones", "Docking"];
+const sortableKeys = [null, "auto", "teleop", "misses", "cubes", "cones", "docking"];
 
 // Main function
 const CloudData = ({route, navigation}) => {
     // Settings
     const [settings, setSettings] = React.useState(null);
-    const [tbaeventcache, setTbaEventCache] = React.useState({});
 
     // Loading states
     const [loadingVisible, setLoadingVisible] = React.useState(false);
@@ -29,177 +28,64 @@ const CloudData = ({route, navigation}) => {
 
     // Loaded cloud data
     const [cloudData, setCloudData] = React.useState([]);
-    const [pitData, setPitData] = React.useState([]);
     const [statistics, setStatistics] = React.useState([]);
     const [teamOrder, setTeamOrder] = React.useState([]);
 
-
     // Normal states
-    const [sortBy, setSortBy] = React.useState(sortableValues[0]);    
-    const [filterBy, setFilterBy] = React.useState("0");
+    const [sortBy, setSortBy] = React.useState(sortableValues[0]);
     const [reverseSort, setReverseSort] = React.useState(false);
-
-    const getClimbScore = (climbValue) => {
-
-        switch (climbValue){
-            case 0 :
-                return 0;
-            case 1 :
-                return 1;
-            case 2 :
-                return 3;
-            case 3 :
-                return 4;
-            default :
-                return 0;
-        }
-
-    }
 
     // Calculates average statistics
     const calculateAverages = (teamData) => {
         const teamAverages = {};
         // Loop over every team
         for (const teamNumber of Object.keys(teamData)) {
-            
-            const averages = { total: 0, auto: 0, teleop: 0, misses: 0, speaker: 0, amp: 0, endgame: 0 };
+            const averages = { auto: 0, teleop: 0, misses: 0, cubes: 0, cones: 0, docking: 0 };
             const count = teamData[teamNumber].length;
             // For every md (match data), add to the average for each stat
-
             for (const md of teamData[teamNumber]) {
-                //console.log(md);
                 // This is horrible
-                averages.total += 2*Number(md[11]) + 5*Number(md[9])+ 2*Number(md[7])
-                + 1*Number(md[16]) + 2*Number(md[13])+ 5*Number(md[14])
-                + 5*Number(md[18]) + getClimbScore(Number(md[19]));
-                averages.auto += 2*(Number(md[11])) + 5*(Number(md[9]))+ 2*(Number(md[7]));
-                averages.teleop += 1*(Number(md[16])) + 2*(Number(md[13]))+ 5*(Number(md[14]));
-                averages.misses += Number(md[15]) + Number(md[17])+ Number(md[12]) + Number(md[10]);
-                averages.speaker += Number(md[9])+Number(md[13])+Number(md[14]);
-                averages.amp += Number(md[11])+Number(md[16]);
-                averages.endgame += 5*Number(md[18]) + getClimbScore(Number(md[19]));
-                //console.log(averages.auto);
+                averages.auto += 6*(Number(md[7])+Number(md[10])) + 4*(Number(md[8])+Number(md[11]))+ 3*(Number(md[9])+Number(md[12]));
+                averages.teleop += 5*(Number(md[14])+Number(md[17])) + 3*(Number(md[15])+Number(md[18]))+ 2*(Number(md[16])+Number(md[19]));
+                averages.misses += Number(md[13]) + Number(md[20]);
+                averages.cubes += Number(md[7])+Number(md[8])+Number(md[9]) + Number(md[14])+Number(md[15])+Number(md[16]);
+                averages.cones += Number(md[10])+Number(md[11])+Number(md[12]) + Number(md[17])+Number(md[18])+Number(md[19]);
+                averages.docking += 8*Number(md[5]) + 4*Number(md[6]) + 6*Number(md[21]) + 4*Number(md[22]);
             }
-            //console.log(averages);
             // Average out and round
-            averages.total = Math.round(10*averages.total / count) / 10;
             averages.auto = Math.round(10*averages.auto / count) / 10;
             averages.teleop = Math.round(10*averages.teleop / count) / 10;
             averages.misses = Math.round(10*averages.misses / count) / 10;
-            averages.speaker = Math.round(10*averages.speaker / count) / 10;
-            averages.amp = Math.round(10*averages.amp / count) / 10;
-            averages.endgame = Math.round(10*averages.endgame / count) / 10;
+            averages.cubes = Math.round(10*averages.cubes / count) / 10;
+            averages.cones = Math.round(10*averages.cones / count) / 10;
+            averages.docking = Math.round(10*averages.docking / count) / 10;
 
             teamAverages[teamNumber] = averages;
-            }
-        
-            //console.log(teamAverages);
+        }
         return teamAverages;
     }
 
-    const coneCounterSettings = {
-        stateMin: 0,
-        stateMax: 300,
-        overallStyle: {justifySelf: "center", marginTop: 0*vh},
-        topButtonProps: {text: "+", buttonStyle: [{...globalButtonStyles.topCounterButton, backgroundColor: CS.accent2},{height: 5*vh,width: 15*vw, padding: 0}], textStyle: globalTextStyles.secondaryText},
-        inputProps: {style: [globalInputStyles.numberInput, globalTextStyles.labelText, {height: 5*vh, width: 15*vw, margin: 0}]},
-        bottomButtonProps: {text: "-", buttonStyle: [{...globalButtonStyles.bottomCounterButton, backgroundColor: CS.accent2}, {height: 5*vh,width: 15*vw, padding: 0}], textStyle: globalTextStyles.secondaryText}
-    }
-
-    const getMatchTeams = (filterKey) =>
-    {
-        const loadedTBAEvent = tbaeventcache;
-       
-        var array = [];
-
-        if (loadedTBAEvent ) {
-
-            for (i = 0; i < JSON.parse(loadedTBAEvent).length; i++) {
-                const data = JSON.parse(loadedTBAEvent)[i];
-                //console.log(data);
-                try{
-                    if (data) {
-                        mt = data.complevel;
-                        mn = data.matchnumber;
-
-                        if (mt == "qm" && mn == filterKey) {
-                            array.push(Number(data.blue3.replace("frc","")));
-                            array.push(Number(data.blue2.replace("frc","")));
-                            array.push(Number(data.blue1.replace("frc","")));
-                            array.push(Number(data.red3.replace("frc","")));
-                            array.push(Number(data.red2.replace("frc","")));
-                            array.push(Number(data.red1.replace("frc","")));
-                        }
-                    }  
-                } catch(e) {
-                    console.error(e);
-                }
-            }
-        }
-            
-        return array;
-    }
-
     // Sorts an object by key values of another object
-    // Ultra specified to work just for sorting by statistics
-    const getSortedObjectOrder = (baseObject, valuesObject, sortKey, reverse, filterKey) => {
-               
-        //console.log(reverse);
-        //console.log(filterKey);
-        //console.log(sortKey);
-        //console.log(valuesObject);
-
-        var objectKeys = Object.keys(valuesObject);
-
-        const compareFunction = (a, b) => {
-            //    console.log(valuesObject[a][sortKey]);
-                return valuesObject[a][sortKey] - valuesObject[b][sortKey];
-            }
-
-        const compareFunction2 = (a, b) => {
-            //    console.log(valuesObject[a][sortKey]);
-                return a - b;
-            }
-
-        if (filterKey > 0)
-        {
-
-            var array = getMatchTeams(String(filterKey));
-            array = array.sort((a, b) => compareFunction2(a, b));
-            var objectKeys2 = [];
-  
-            for (i = 0; i < array.length; i++) {
-                var item = array[i];
-                var item2 = objectKeys.filter((name) => name == String(item));
-                if (item == item2) {
-                    objectKeys2.push(String(item));
-                }
-            }
-
-            //console.log(objectKeys2);
-            objectKeys = objectKeys2;
-        }
-
+    // Ultra specified to work just for sorting by staistics
+    const getSortedObjectOrder = (baseObject, valuesObject, sortKey, reverse) => {
+        const objectKeys = Object.keys(baseObject);
         if (sortKey === null) {
             return reverse ? objectKeys.reverse() : objectKeys;
         }
-        
+
+        const compareFunction = (a, b) => {
+            return valuesObject[a][sortKey] <= valuesObject[b][sortKey];
+        }
 
         const sortedKeys = objectKeys.sort((a, b) => compareFunction(reverse ? b : a, reverse ? a : b));
-        //console.log(sortedKeys);
-        
         return sortedKeys;
     }
 
-    // Sorts an object by key values of another object
-    // Ultra specified to work just for sorting by statistics
-
     const sortMatches = (teamData) => {
-        //Sort matches by matchtype and matchnumber
         const compareFunction = (a, b) => {
             return (
-                Number(a[4]) * 300 + Number(a[3]) -
-                Number(b[4]) * 300 + Number(b[3])
+                Number(a[2]) * 300 + Number(a[1]) >
+                Number(b[2]) * 300 + Number(b[1])
             )
         }
         return teamData.sort(compareFunction);
@@ -214,22 +100,13 @@ const CloudData = ({route, navigation}) => {
             setSettings(loadedSettings);
 
             const loadedCache = await loadCloudCache();
-            const loadedPitCache = await loadPitCache();
-
             if (loadedCache !== null) {
                 setCloudData(loadedCache);
                 setTeamOrder(Object.keys(loadedCache));
                 setStatistics(calculateAverages(loadedCache));
             }
-            if (loadedPitCache !== null) {
-                setPitData(loadedPitCache);
-            }
-
-            const loadedTBAEvent = await loadTbaEventCache();
-            setTbaEventCache(loadedTBAEvent);
-    
         };
-    
+        
         initializeFirebaseFromSettings();
         wrapper();
     }, []);
@@ -240,18 +117,13 @@ const CloudData = ({route, navigation}) => {
 
         const storage = getStorage();
         const downloadedData = await downloadAllFilesFromCloud(storage, settings.subpath ? settings.subpath : "");
-        const downloadedPitData = await downloadPitFilesFromCloud(storage, settings.subpath ? settings.subpath : "");
         await saveCloudCache(downloadedData);
-        await savePitCache(downloadedPitData);
-
         setCloudData(downloadedData);
-        setPitData(downloadedPitData);
         setTeamOrder(Object.keys(downloadedData));
         setStatistics(calculateAverages(downloadedData));
- 
+
         setLoadingVisible(false);
     }
-
 
     // Special case that's not worth making a TTButton or globalButtonStyle for
     const MatchKeyButton = (props) => {
@@ -272,9 +144,7 @@ const CloudData = ({route, navigation}) => {
                                     {
                                         teamNumber: props.teamNumber, 
                                         teamStatistics: statistics[props.teamNumber],
-                                        settings: settings,
-                                        teamData: Object.keys(cloudData).includes(props.teamNumber)? sortMatches(cloudData[props.teamNumber]):[],
-                                        pitData: Object.keys(pitData).includes(props.teamNumber)? pitData[props.teamNumber]:[],
+                                        teamData: sortMatches(cloudData[props.teamNumber]),
                                     })
                             }
                         }
@@ -294,34 +164,20 @@ const CloudData = ({route, navigation}) => {
                         </Text>
                     </View>
                     <View>
-                        <Text style={topLabelStyle}>Endgame</Text>
-                        <Text style={bottomLabelStyle}>
-                            {statistics[props.teamNumber]?.endgame}
-                        </Text>
-                    </View>
-                    <View>
                         <Text style={topLabelStyle}>Misses</Text>
                         <Text style={bottomLabelStyle}>
                             {statistics[props.teamNumber]?.misses}
                         </Text>
                     </View>
+                    <View>
+                        <Text style={topLabelStyle}>Docking</Text>
+                        <Text style={bottomLabelStyle}>
+                            {statistics[props.teamNumber]?.docking}
+                        </Text>
+                    </View>
                 </View>
             </View>
         );
-    }
-    const onPress = (increment) => {
-
-        const stateMin =  0;
-        const stateMax =  255;
-        if (filterBy != null) {
-            let newState = Number(filterBy) + increment;
-            newState = Math.min(Math.max(newState, stateMin), stateMax); // Clamp between max and min
-            setFilterBy(newState.toString());
-
-            const sortKey = sortableKeys[sortableValues.indexOf(sortBy)];
-            const newTeamOrder = getSortedObjectOrder(cloudData, statistics, sortKey, reverseSort, newState);
-            setTeamOrder(newTeamOrder)
-        }
     }
 
     // No cloud connection
@@ -351,12 +207,12 @@ const CloudData = ({route, navigation}) => {
                 acceptText={loadingContent[2]}
             />
             
-            <View style={{...globalContainerStyles.centerContainer, flex: 0, height: 30*vh, zIndex: 2}}>
+            <View style={{...globalContainerStyles.centerContainer, flex: 0, height: 20*vh, zIndex: 5}}>
                 <TTGradient/>
                 {/* <Text style={{...globalTextStyles.primaryText, fontSize: 16*fU}}>
                     Youre connected to {getApp().options.projectId}
                 </Text> */}
-                <View style={{flexDirection: "row", justifyContent: "space-evenly", marginTop: 1*vh, zIndex: 5}}>
+                <View style={{flexDirection: "row", justifyContent: "space-evenly", marginTop: 1*vh, zIndex: 4}}>
                     <TTButton
                         text="⟳"
                         buttonStyle={{...globalButtonStyles.primaryButton, width: 7*vh, aspectRatio: 1, margin: 2*vh}}
@@ -368,55 +224,25 @@ const CloudData = ({route, navigation}) => {
                         state={sortBy} 
                         setState={(value) => {
                             setSortBy(value);
-                            const filterKey = filterBy;
                             const sortKey = sortableKeys[sortableValues.indexOf(value)];
-                            const newTeamOrder = getSortedObjectOrder(cloudData, statistics, sortKey, reverseSort, filterKey);
+                            const newTeamOrder = getSortedObjectOrder(cloudData, statistics, sortKey, reverseSort);
                             setTeamOrder(newTeamOrder);
                         }} 
                         items={sortableValues}
                         boxWidth={50*vw}
-                        boxHeight={5.1*vh}
+                        boxHeight={8.1*vh}
                         boxStyle={globalInputStyles.dropdownInput}
-                        textStyle={globalTextStyles.labelText} 
-                        overrideStyle={{margin: 5, alignSelf: "center"}}
-                        zIndex={8}
+                        textStyle={globalTextStyles.labelText}
+                        overrideStyle={{margin: 10, alignSelf: "center"}}
+                        zIndex={5}
                     />
-                </View>  
-                <View style={{flexDirection: "row", justifyContent: "space-evenly", marginTop: 1*vh, zIndex: 4}}>
-                    <Text style={globalTextStyles.labelText}> Filter By Match...</Text>
-                    <TTButton 
-                        text="+"
-                        buttonStyle={{...globalButtonStyles.primaryButton, width: 7*vh, aspectRatio: 1, margin: 2*vh}}
-                        textStyle={{color: CS.light1, fontSize: 32*fU, marginTop: (Platform.OS !== 'ios') ? -1.5*vh : -1.3*vh }}
-                        onPress={() => onPress(+1)} />
-                    <TTNumberInput
-                        state={filterBy}
-                        setState={(value) => {
-                            setFilterBy(value);
-                            const filterKey = value;
-                            const sortKey = sortableKeys[sortableValues.indexOf(sortBy)];
-                            const newTeamOrder = getSortedObjectOrder(cloudData, statistics, sortKey, reverseSort, filterKey);
-                            setTeamOrder(newTeamOrder);
-                        }} 
-                        style={[
-                            {...globalInputStyles.numberInput, width: 15*vw, height: 5*vh},
-                            globalTextStyles.labelText
-                        ]}
-                    />
-                    <TTButton 
-                        text="-"
-                        buttonStyle={{...globalButtonStyles.primaryButton, width: 7*vh, aspectRatio: 1, margin: 2*vh}}
-                        textStyle={{color: CS.light1, fontSize: 32*fU, marginTop: (Platform.OS !== 'ios') ? -1.5*vh : -1.3*vh  }}
-                        onPress={() => onPress(-1)} />
                 </View>
-              
                 <TTSimpleCheckbox 
                     state={reverseSort}
                     setState={(value) => {
                         setReverseSort(value);
                         const sortKey = sortableKeys[sortableValues.indexOf(sortBy)];
-                        const filterKey = filterBy;
-                        const newTeamOrder = getSortedObjectOrder(cloudData, statistics, sortKey, value, filterKey);
+                        const newTeamOrder = getSortedObjectOrder(cloudData, statistics, sortKey, value);
                         setTeamOrder(newTeamOrder);
                     }}
                     text="Reverse Order?" 

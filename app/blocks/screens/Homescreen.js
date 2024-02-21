@@ -16,7 +16,6 @@ const Homescreen = ({route, navigation}) => {
     // Prevents the app from erroring out when firebase is first used
     React.useEffect(() => {
         initializeFirebaseFromSettings();
-        
     },[])
 
     // !! TODO MAKE EVERY SINGLE FONT SIZE IN REFERENCE TO VH / VW
@@ -47,36 +46,17 @@ const Homescreen = ({route, navigation}) => {
                     globalButtonStyles.primaryButton,
                     {   
                         borderRadius: 2 * vw,
-                        height: 30 * vh,
+                        height: 50 * vh,
                     }
                 ]}
                 textStyle={[
                     globalTextStyles.primaryText,
                     {
-                        fontSize: 42 * fU,
+                        fontSize: 60 * fU,
                         color: CS.light1
                     }
                 ]}
                 onPress= {() => navigation.navigate("ScoutTeam", {})}
-            />
-            {/* Pit Scout */}
-                        <TTButton 
-                text="Pit Scout"
-                buttonStyle={[
-                    globalButtonStyles.secondaryButton,
-                    {   
-                        borderRadius: 2 * vw,
-                        height: 10 * vh,
-                    }
-                ]}
-                textStyle={[
-                    globalTextStyles.primaryText,
-                    {
-                        fontSize: 42 * fU,
-                        color: CS.light1
-                    }
-                ]}
-                onPress= {() => navigation.navigate("PitScout", {})}
             />
 
             {/* Local Data */}
@@ -101,7 +81,7 @@ const Homescreen = ({route, navigation}) => {
 
             {/* Cloud Data */}
             <TTButton 
-                text="Cloud Metrics"
+                text="Cloud Data"
                 buttonStyle={[
                     globalButtonStyles.secondaryButton,
                     {   

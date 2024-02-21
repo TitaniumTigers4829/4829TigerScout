@@ -43,7 +43,6 @@ const globalButtonStyles = StyleSheet.create({
         // Color
         backgroundColor: CS.accent1,
     },
-
     topCounterButton: {
         // Spacing and positioning
         width: "80%",
