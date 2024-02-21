@@ -1,20 +1,17 @@
 // Library Imports
 import * as React from 'react';
-import { getStorage } from 'firebase/storage';
-import { getApp, getApps } from "firebase/app";
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView,  Image,StyleSheet, Text, View } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 
 // Component Imports
-import { fU, vh, vw } from '../../common/Constants';
-import { globalButtonStyles, globalInputStyles, globalTextStyles, globalContainerStyles } from '../../common/GlobalStyleSheet';
-import { TTButton, TTSimpleCheckbox } from '../components/ButtonComponents';
 import { ColorScheme as CS } from '../../common/ColorScheme';
+import { fU, vh, vw } from '../../common/Constants';
+import { globalContainerStyles, globalButtonStyles, globalInputStyles, globalTextStyles } from '../../common/GlobalStyleSheet';
 import { TTGradient } from '../components/ExtraComponents';
-import { matchTypeValues, teamColorValues } from './ScoutTeam';
 import { TTDropdown } from '../components/InputComponents';
+import { matchTypeValues, teamColorValues,stageValues } from './ScoutTeam';
 
-const chartableValues = ["Auto Points", "Teleop Points", "High Cargo", "Mid Cargo", "Low Cargo", "Cubes", "Cones", "Misses", "Docking"];
+const chartableValues = ["Auto Points", "Teleop Points", "Speaker", "Amp", "Misses", "Endgame Points"];
 
 const TeamAnalytics = ({route, navigation}) => {
 
@@ -22,17 +19,58 @@ const TeamAnalytics = ({route, navigation}) => {
     const [chartValue, setChartValue] = React.useState("Teleop Points");
     const [chartData, setChartData] = React.useState([]);
     const [chartLabels, setChartLabels] = React.useState([]);
+    const [firebaseURL,setFirebaseURL] = React.useState("");
+    const [subpath,setSubpath] = React.useState("");
 
     const checkEmptyComments = () => {
         for (const match of route.params.teamData) {
-            if (match[23].length !== 0) return false;
+            if (match[24].length !== 0) return false;
+        }
+        for (const pit of route.params.pitData) {
+            if (pit[15].length !==0)return false;
         }
         return true;
     }
 
+    const getImage = (imageName, firebaseURL, subpath) => {
+        if (subpath.startsWith("/")){
+            subpath = subpath.substring(1);
+        }
+        const uri = "https://firebasestorage.googleapis.com/v0/b/"+firebaseURL+"/o/" + subpath +"%2FPhotos%2F" + imageName + "?alt=media";
+        //console.log(uri);
+
+        return uri;
+    }
+
+    const getClimbScore = (climbValue) => {
+
+        switch (climbValue){
+            case 0 :
+                return 0;
+            case 1 :
+                return 1;
+            case 2 :
+                return 3;
+            case 3 :
+                return 4;
+            default :
+                return 0;
+        }
+
+    }
+
     const checkForDNP = () => {
         for (const match of route.params.teamData) {
-            const comment = match[23].toLowerCase().replace(/’/g, "'");
+            const comment = match[24].toLowerCase().replace(/’/g, "'");
+            if (
+                comment.includes("dnp") || 
+                comment.includes("don't pick") || 
+                comment.includes("dont pick") || 
+                comment.includes("do not pick")
+            ) return true;
+        }
+        for (const pit of route.params.pitData) {
+            const comment = pit[15].toLowerCase().replace(/’/g, "'");
             if (
                 comment.includes("dnp") || 
                 comment.includes("don't pick") || 
@@ -46,57 +84,47 @@ const TeamAnalytics = ({route, navigation}) => {
     // Should be a better way to do this
     const getSpecificData = (section) => {
         switch (section) {
+            case ("Total Points"): {
+                const points = route.params.teamData.map((md) => {
+                    return 2*Number(md[11]) + 5*Number(md[9])+ 2*Number(md[7])
+                    + 1*Number(md[16]) + 2*Number(md[13])+ 5*Number(md[14])
+                    + 5*Number(md[18]) + getClimbScore(Number(md[19]));
+                });
+                return points;
+            } break;
             case ("Auto Points"): {
                 const points = route.params.teamData.map((md) => {
-                    return 6*(Number(md[7])+Number(md[10])) + 4*(Number(md[8])+Number(md[11]))+ 3*(Number(md[9])+Number(md[12]));
+                    return 2*(Number(md[11])) + 5*(Number(md[9]))+ 2*(Number(md[7]));
                 });
                 return points;
             } break;
             case ("Teleop Points"): {
                 const points = route.params.teamData.map((md) => {
-                    return 5*(Number(md[14])+Number(md[17])) + 3*(Number(md[15])+Number(md[18]))+ 2*(Number(md[16])+Number(md[19]));
+                    return 1*(Number(md[16])) + 2*(Number(md[13]))+ 5*(Number(md[14]));
                 });
                 return points;
             } break;
-            case ("High Cargo"): {
-                const count = route.params.teamData.map((md) => {
-                    return Number(md[7]) + Number(md[14]);
-                });
-                return count;
-            } break;
-            case ("Mid Cargo"): {
-                const count = route.params.teamData.map((md) => {
-                    return Number(md[8]) + Number(md[15]);
-                });
-                return count;
-            } break;
-            case ("Low Cargo"): {
-                const count = route.params.teamData.map((md) => {
-                    return Number(md[9]) + Number(md[16]);
-                });
-                return count;
-            } break;
             case ("Misses"): {
                 const count = route.params.teamData.map((md) => {
-                    return Number(md[13]) + Number(md[20]);
+                    return Number(md[15]) + Number(md[17])+ Number(md[12]) + Number(md[10]);
                 });
                 return count;
             } break;
-            case ("Docking"): {
+            case ("Endgame Points"): {
                 const count = route.params.teamData.map((md) => {
-                    return 8*Number(md[5]) + 4*Number(md[6]) + 6*Number(md[21]) + 4*Number(md[22]);
+                    return 5*Number(md[18]) + getClimbScore(Number(md[19]));
                 });
                 return count;
             } break;
-            case ("Cubes"): {
+            case ("Speaker"): {
                 const count = route.params.teamData.map((md) => {
-                    return Number(md[7])+Number(md[8])+Number(md[9]) + Number(md[14])+Number(md[15])+Number(md[16]);
+                    return Number(md[9])+Number(md[13])+Number(md[14]);
                 });
                 return count;
             } break;
-            case ("Cones"): {
+            case ("Amp"): {
                 const count = route.params.teamData.map((md) => {
-                    return Number(md[10])+Number(md[11])+Number(md[12]) + Number(md[17])+Number(md[18])+Number(md[19]);
+                    return Number(md[11])+Number(md[16]);
                 });
                 return count;
             } break;
@@ -104,12 +132,14 @@ const TeamAnalytics = ({route, navigation}) => {
     }
 
     React.useEffect(() => {
-        const matchAbreviations = route.params.teamData.map((item) => {
-            return `${matchTypeValues[item[2]][0]}${item[1]}`;
+        const matchAbbreviations = route.params.teamData.map((item) => {
+            return `${matchTypeValues[item[5]][1]}${item[4]}`;
         });
-        setChartLabels(matchAbreviations);
-        
+        setChartLabels(matchAbbreviations);        
         setChartData(getSpecificData("Teleop Points"));
+
+        setSubpath(route.params.settings.subpath);
+        setFirebaseURL(route.params.settings.cloudConfig.storageBucket);
     }, [])
 
     // Individual match data component
@@ -117,7 +147,7 @@ const TeamAnalytics = ({route, navigation}) => {
         return (
             <View key={props.id} style={styles.matchDataContainer}>
                 <Text style={{...globalTextStyles.secondaryText, fontSize: 24*fU, color: CS.dark1}}>
-                    {matchTypeValues[props.matchData[2]]} {props.matchData[1]}  —  {teamColorValues[props.matchData[3]]}
+                    {matchTypeValues[props.matchData[5]]} {props.matchData[4]}  —  {teamColorValues[props.matchData[6]]}
                 </Text>
 
                 {/* Auto subcontainer */}
@@ -126,23 +156,15 @@ const TeamAnalytics = ({route, navigation}) => {
                         Auto
                     </Text>
 
-                    <Text style={styles.dataLabel}><Text style={styles.dataText}>{props.matchData[4] == 1 ? "Did" : "Did not"}</Text> taxi</Text>
+                    <Text style={styles.dataLabel}><Text style={styles.dataText}>{props.matchData[7] == 1 ? "" : "No"}</Text> Leave</Text>
+                    <Text style={styles.dataLabel}><Text style={styles.dataText}>{props.matchData[8] == 1 ? "" : "No"}</Text> Centerline Note Scored</Text>
                     <View style={styles.rowAlignContainer}>
-                        <Text style={styles.dataLabel}>Cube High-<Text style={styles.dataText}>{props.matchData[7]}</Text></Text>
-                        <Text style={styles.dataLabel}>Cube Mid-<Text style={styles.dataText}>{props.matchData[8]}</Text></Text>
-                        <Text style={styles.dataLabel}>Cube Low-<Text style={styles.dataText}>{props.matchData[8]}</Text></Text>
+                        <Text style={styles.dataLabel}>Speaker-<Text style={styles.dataText}>{props.matchData[9]}</Text></Text>
+                        <Text style={styles.dataLabel}>Speaker Misses-<Text style={styles.dataText}>{props.matchData[10]}</Text></Text>
                     </View>
                     <View style={styles.rowAlignContainer}>
-                        <Text style={styles.dataLabel}>Cone High-<Text style={styles.dataText}>{props.matchData[10]}</Text></Text>
-                        <Text style={styles.dataLabel}>Cone Mid-<Text style={styles.dataText}>{props.matchData[11]}</Text></Text>
-                        <Text style={styles.dataLabel}>Cone Low-<Text style={styles.dataText}>{props.matchData[12]}</Text></Text>
-                    </View>
-                    <View style={styles.rowAlignContainer}>
-                        <Text style={styles.dataLabel}>Miss-<Text style={styles.dataText}>{props.matchData[12]}</Text></Text>
-                    </View>
-                    <View style={styles.rowAlignContainer}>
-                        <Text style={styles.dataLabel}><Text style={styles.dataText}>{props.matchData[5] == 1 ? "Did" : "Did not"}</Text> dock</Text>
-                        <Text style={styles.dataLabel}><Text style={styles.dataText}>{props.matchData[6] == 1 ? "Did" : "Did not"}</Text> engage</Text>
+                        <Text style={styles.dataLabel}>Amp-<Text style={styles.dataText}>{props.matchData[11]}</Text></Text>
+                        <Text style={styles.dataLabel}>Amp Misses-<Text style={styles.dataText}>{props.matchData[12]}</Text></Text>
                     </View>
                 </View>
 
@@ -153,22 +175,24 @@ const TeamAnalytics = ({route, navigation}) => {
                     </Text>
 
                     <View style={styles.rowAlignContainer}>
-                        <Text style={styles.dataLabel}>Cube High-<Text style={styles.dataText}>{props.matchData[14]}</Text></Text>
-                        <Text style={styles.dataLabel}>Cube Mid-<Text style={styles.dataText}>{props.matchData[15]}</Text></Text>
-                        <Text style={styles.dataLabel}>Cube Low-<Text style={styles.dataText}>{props.matchData[16]}</Text></Text>
+                        <Text style={styles.dataLabel}>Speaker-<Text style={styles.dataText}>{props.matchData[13]}</Text></Text>
+                        <Text style={styles.dataLabel}>AmpSpeaker-<Text style={styles.dataText}>{props.matchData[14]}</Text></Text>
+                        <Text style={styles.dataLabel}>Speaker Miss-<Text style={styles.dataText}>{props.matchData[15]}</Text></Text>
                     </View>
                     <View style={styles.rowAlignContainer}>
-                        <Text style={styles.dataLabel}>Cone High-<Text style={styles.dataText}>{props.matchData[17]}</Text></Text>
-                        <Text style={styles.dataLabel}>Cone Mid-<Text style={styles.dataText}>{props.matchData[18]}</Text></Text>
-                        <Text style={styles.dataLabel}>Cone Low-<Text style={styles.dataText}>{props.matchData[19]}</Text></Text>
+                        <Text style={styles.dataLabel}>Amp-<Text style={styles.dataText}>{props.matchData[16]}</Text></Text>
+                        <Text style={styles.dataLabel}>Amp Misses-<Text style={styles.dataText}>{props.matchData[17]}</Text></Text>
                     </View>
                     <View style={styles.rowAlignContainer}>
-                        <Text style={styles.dataLabel}>Miss-<Text style={styles.dataText}>{props.matchData[20]}</Text></Text>
+                        <Text style={styles.dataLabel}><Text style={styles.dataText}>{props.matchData[18] == 1 ? "Did" : "Did not"}</Text> Park</Text>
+                        <Text style={styles.dataLabel}><Text style={styles.dataText}>{props.matchData[19] == 1 ? "Did" : "Did not"}</Text> Trap</Text>
                     </View>
                     <View style={styles.rowAlignContainer}>
-                        <Text style={styles.dataLabel}><Text style={styles.dataText}>{props.matchData[21] == 1 ? "Did" : "Did not"}</Text> dock</Text>
-                        <Text style={styles.dataLabel}><Text style={styles.dataText}>{props.matchData[22] == 1 ? "Did" : "Did not"}</Text> engage</Text>
+                        <Text style={styles.dataLabel}><Text style={styles.dataText}>{props.matchData[20] == 1 ? "Did" : "Did not"}</Text> Harmony</Text>
+                        <Text style={styles.dataLabel}><Text style={styles.dataText}>{props.matchData[21] == 1 ? "Did" : "Did not"}</Text> Spotlit</Text>
+                        <Text style={styles.dataLabel}><Text style={styles.dataText}>{props.matchData[22] == 1 ? "Did" : "Did not"}</Text> Stage</Text>
                     </View>
+           
                 </View>
 
                 {/* Comment Subcontainer */}
@@ -177,12 +201,97 @@ const TeamAnalytics = ({route, navigation}) => {
                         Comment
                     </Text>
                     <View style={styles.rowAlignContainer}>
-                        <Text style={styles.dataLabel}>"{props.matchData[23]}"</Text>
+                        <Text style={styles.dataLabel}>"{props.matchData[24]}"</Text>
                     </View>
                 </View>
 
             </View>
         );
+    }
+    // Individual pit data component
+
+    const PitDataBox = (props) => {
+    
+    if (props.pitData && props.pitData.length > 0)
+    {
+
+        return (
+            <View key={props.id} style={styles.matchDataContainer}>
+                <Text style={{...globalTextStyles.secondaryText, fontSize: 24*fU, color: CS.dark1}}>
+                    {props.pitData[1]} {props.pitData[2]} 
+                </Text>
+
+                {/* Pit Data */}
+                <View style={styles.matchDataSubcontainer}>
+                    <Text style={{...globalTextStyles.secondaryText, fontSize: 20*fU, color: CS.dark1}}>
+                        Pit Data
+                    </Text>
+
+                    <View style={styles.rowAlignContainer}>
+                        <Text style={styles.dataLabel}>DriveTrain-<Text style={styles.dataText}>{props.pitData[3]}</Text></Text>
+                        <Text style={styles.dataLabel}>Motors-<Text style={styles.dataText}>{props.pitData[4]}</Text></Text>
+                    </View>
+                    <View style={styles.rowAlignContainer}>
+                        <Text style={styles.dataLabel}># Batteries-<Text style={styles.dataText}>{props.pitData[5]}</Text></Text>
+                        <Text style={styles.dataLabel}>Weight-<Text style={styles.dataText}>{props.pitData[6]}</Text></Text>
+                    </View>
+                    <View style={styles.rowAlignContainer}>
+                        <Text style={styles.dataLabel}>Language-<Text style={styles.dataText}>{props.pitData[7]}</Text></Text>
+                        <Text style={styles.dataLabel}>Paradigm-<Text style={styles.dataText}>{props.pitData[8]}</Text></Text>
+                    </View>
+                    <View style={styles.rowAlignContainer}>
+                        <Text style={styles.dataLabel}>Human Player-<Text style={styles.dataText}>{props.pitData[9]}</Text></Text>
+                        <Text style={styles.dataLabel}>EndGame-<Text style={styles.dataText}>{props.pitData[11]}</Text></Text>
+                    </View>
+                    <View style={styles.rowAlignContainer}>
+                        <Text style={styles.dataLabel}>Under Stage-<Text style={styles.dataText}>{props.pitData[10] == 1 ? "Yes" : "No"}</Text></Text>
+                        <Text style={styles.dataLabel}>Shooting-<Text style={styles.dataText}>{props.pitData[12]}</Text></Text>
+                    </View>
+                    <View style={styles.rowAlignContainer}>
+                        <Text style={styles.dataLabel}>Overall Ranking-<Text style={styles.dataText}>{props.pitData[13]}</Text></Text>
+                    </View>
+                </View>
+
+                {/* Comment Subcontainer */}
+                <View style={styles.matchDataSubcontainer}>
+                    <Text style={{...globalTextStyles.secondaryText, fontSize: 20*fU, color: CS.dark1}}>
+                        Comments
+                    </Text>
+                    <View style={styles.rowAlignContainer}>
+                        <Text style={styles.dataLabel}>"{props.pitData[15]}"</Text>
+                    </View>
+                </View>
+
+                {/* Image subcontainer */}
+                <View style={styles.matchDataSubcontainer}>
+                    <Text style={{...globalTextStyles.secondaryText, fontSize: 20*fU, color: CS.dark1}}>
+                        Images
+                    </Text>
+
+
+            { props.pitData[16].split(",").map((imageName, imageindex) => {
+                if (imageName != null) {
+                return (
+
+                    <View key={imageindex} style={styles.rowAlignContainer}>
+                    <Text style={styles.dataText}></Text>
+                    <Image
+                        style={{width: 400, height: 600}}
+                        source={{uri:getImage(imageName, firebaseURL, subpath)}}
+                    />
+                    
+                    <View style={{margin: 2*vh}}></View>
+                    </View>
+                );
+                }
+            })}
+
+                </View>
+            </View>
+        );
+        } else {
+            return;
+        }
     }
 
     const PerformanceChart = (data, labels) => {
@@ -266,14 +375,14 @@ const TeamAnalytics = ({route, navigation}) => {
                             <Text style={globalTextStyles.secondaryText}>{route.params.teamStatistics.misses}</Text>
                         </View>
                         <View style={{...styles.columnContainer, alignItems: "center"}}>
-                            <Text style={styles.statHeader}>Dock Avg</Text>
-                            <Text style={globalTextStyles.secondaryText}>{route.params.teamStatistics.docking}</Text>
+                            <Text style={styles.statHeader}>Endgame Avg</Text>
+                            <Text style={globalTextStyles.secondaryText}>{route.params.teamStatistics.endgame}</Text>
                         </View>
                     </View>
                     <View style={{margin: 2*vh}}/>
                 </View>
 
-                {/* Performace Over Time */}
+                {/* Performance Over Time */}
                 <View style={{...styles.sectionStyle, zIndex: 5}}>
                     <TTGradient/>
                     <View style={{margin: 1*vh}}/>
@@ -325,15 +434,23 @@ const TeamAnalytics = ({route, navigation}) => {
                         Comments
                     </Text>
                     {route.params.teamData.map((match, index) => {
-                        const comment = match[23];
+                        const comment = match[24];
                         if (comment.length !== 0) return (
                             <View key={index}>
                                 <Text style={{...globalTextStyles.labelText, margin: 0.5*vh}}>"{comment}"</Text>
                             </View>
                         );
                     })}
+                    {route.params.pitData.map((pit, pitindex) => {
+                        const comment = pit[15];
+                        if (comment.length !== 0) return (
+                            <View key={pitindex}>
+                                <Text style={{...globalTextStyles.labelText, margin: 0.5*vh}}>"{comment}"</Text>
+                            </View>
+                        );
+                    })}
                     { checkEmptyComments() &&
-                        <Text>Nobody has commented on this team yet.</Text>
+                        <Text style={{fontFamily: "LGC Light", color: CS.light2, fontSize: 16*fU, textAlign: "center", margin: 2*vh}}>Nobody has commented on this team yet.</Text>
                     }
 
                     <View style={{margin: 2*vh}}/>
@@ -344,10 +461,16 @@ const TeamAnalytics = ({route, navigation}) => {
                     <TTGradient/>
                     <View style={{margin: 1*vh}}/>
 
+                    {route.params.pitData.length > 0 && <Text style={styles.sectionTitle}>Pit Scouting</Text>}
+
+                    {route.params.pitData.map((pit, index) => {
+                        return <PitDataBox key={index} id={index} pitData={pit}/>
+                    })}
+                    
+
                     <Text style={styles.sectionTitle}>
                         Individual Matches
                     </Text>
-
                     {route.params.teamData.map((match, index) => {
                         return <MatchDataBox key={index} id={index} matchData={match}/>
                     })}
@@ -397,13 +520,13 @@ const styles = StyleSheet.create({
     },
     dataText: {
         fontFamily: "LGC Bold",
-        fontSize: 14*fU,
+        fontSize: 12*fU,
     },
     dataLabel: {
         marginVertical: 0.4*vh,
 
         fontFamily: "LGC Light Italic", // For reasons I cannot explain, setting this to "LGC Light" adds a margin of about 130 to every item using it
-        fontSize: 14*fU,
+        fontSize: 12*fU,
     },
     statHeader: {
         ...globalTextStyles.secondaryText,

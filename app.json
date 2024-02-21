@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "name": "TigerScout-Crescendo2024",
+    "slug": "TigerScout-Crescendo2024",
+    "version": "1.0.0",
+    "sdkVersion": "50.0.0",
+    "platforms": [],
+    "android": {
+      "package": "com.anonymous.trobotscoutingcrescendo2024"
+    }
+  }
+}
