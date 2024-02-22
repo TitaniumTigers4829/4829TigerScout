@@ -262,31 +262,6 @@ const TeamAnalytics = ({route, navigation}) => {
                     </View>
                 </View>
 
-                {/* Image subcontainer */}
-                <View style={styles.matchDataSubcontainer}>
-                    <Text style={{...globalTextStyles.secondaryText, fontSize: 20*fU, color: CS.dark1}}>
-                        Images
-                    </Text>
-
-
-            { props.pitData[16].split(",").map((imageName, imageindex) => {
-                if (imageName != null) {
-                return (
-
-                    <View key={imageindex} style={styles.rowAlignContainer}>
-                    <Text style={styles.dataText}></Text>
-                    <Image
-                        style={{width: 400, height: 600}}
-                        source={{uri:getImage(imageName, firebaseURL, subpath)}}
-                    />
-                    
-                    <View style={{margin: 2*vh}}></View>
-                    </View>
-                );
-                }
-            })}
-
-                </View>
             </View>
         );
         } else {
