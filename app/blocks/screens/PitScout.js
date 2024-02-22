@@ -156,43 +156,6 @@ const PitScout = ({route, navigation}) =>
     const scrollRef = React.useRef(null);
     const ref = React.useRef(null);
 
-    const handlePhoto = async () => {
-        const options = { quality: 0.4, skipProcessing: true};
-        const photo = await ref.current.takePictureAsync(options);
-
-        //console.log(photo.uri);
-        const photopath = photo.uri;
-
-        setPhotos([
-            ...photos,
-            photopath
-          ]);
-        setPhotoIndex(photos.length);
-    }
-    
-    if (!permission){
-        return (
-            <View style={globalContainerStyles.centerContainer}>
-                <TTGradient/>
-                <Text style={globalTextStyles.labelText}>Requesting for camera permission...</Text>
-            </View>
-        );
-    }
-
-    if (!permission.granted) {
-        return (
-            <View style={globalContainerStyles.centerContainer}>
-                <TTGradient/>
-                <Text style={{...globalTextStyles.secondaryText, fontSize: 30, marginHorizontal: 3*vh}}>
-                    TrobotScout doesn't have access to your camera!
-                </Text>
-                <Text style={{...globalTextStyles.labelText, color: `${CS.light1}80`, margin: 3*vh}}>
-                    You need to enable camera permissions in your phone's settings.
-                </Text>
-            </View>
-        );
-    }
-
     return (
         <View style={globalContainerStyles.topContainer}>
         <TTGradient/>
@@ -205,22 +168,7 @@ const PitScout = ({route, navigation}) =>
                 Alert.alert('Modal has been closed.');
                 setUploadPhoto(false);
             }}>
-            <View style={{flex: 1, flexDirection: "column", alignContent: "center", justifyContent: "space-around", padding: 3*vh}}>
-                <Camera style={styles.camera} type={type} ref={ref}>
-                    <View style={styles.buttonContainer}>
-                    <TouchableOpacity style={styles.button} onPress={handlePhoto}>
-                        <Text style={{...globalButtonStyles.primaryButton, fontFamily: "LGC", color: CS.light1, fontSize: 24*fU, alignSelf: "center",  textAlign: "center",width: "100%", margin: 3*vh}}>Take Photo</Text>
-                    </TouchableOpacity>
-                    </View>
-                </Camera>
-
-                <TTButton 
-                    text="Close" 
-                    onPress={() => {setUploadPhoto(false)}}
-                    buttonStyle={{...globalButtonStyles.primaryButton, width: "100%", margin: 3*vh}} 
-                    textStyle={globalTextStyles.secondaryText}
-                />
-            </View>
+            
             </Modal>
             {/* All scouting settings go in the scroll view */}
             <KeyboardAvoidingView style={{flex: 1}} behavior="height">
@@ -381,52 +329,10 @@ const PitScout = ({route, navigation}) =>
                             zIndex={6}
                         />
                     </View>
-                    <View style={{...styles.rowAlignContainer, zIndex: 5}}>
-                    
-                        <TTNumberInput
-                            state={overallStatus}
-                            setState={setOverallStatus}
-                            stateMax={10}
-                            maxLength={10}
-                            placeholder="Overall Status 1-10"
-                            placeholderTextColor={`${CS.light1}50`}
-                            style={styles.topNumberInput}
-                        />
-                    </View>
-                    <View style={{marginBottom: 5*vh}}/>
+                
 
                 </View>
 
-                <View style={{height: 75*vh}}>
-                    <TTGradient/>
-                    <View style={styles.rowAlignContainer}>
-                    <TTButton
-                        text="Open Camera"
-                        buttonStyle={{...globalButtonStyles.secondaryButton, width: "100%"}} 
-                        textStyle={globalTextStyles.secondaryText}
-                        onPress={() => setUploadPhoto(true)}
-                    />
-                    </View>
-                    <View style={styles.rowAlignContainer}>
-                    <Image
-                        style={styles.tinyLogo}
-                        source={{uri: photos[photoIndex]}}
-                    />
-                    </View>
-                    <View style={styles.rowAlignContainer}>
-                    <TTButton 
-                        text="<" 
-                        onPress={() => {setPhotoIndex(photoIndex - 1);}}
-                        buttonStyle={{...globalButtonStyles.secondaryButton, width: "45%", margin: 3*vh}} 
-                        textStyle={globalTextStyles.secondaryText}
-                    />
-                    <TTButton 
-                        text=">" 
-                        onPress={() => {setPhotoIndex(photoIndex + 1);}}
-                        buttonStyle={{...globalButtonStyles.secondaryButton, width: "45%", margin: 3*vh}} 
-                        textStyle={globalTextStyles.secondaryText}
-                    />
-                    </View>
                     <View style={styles.rowAlignContainer}>
                         <TTTextInput
                             state={comments}
@@ -445,8 +351,8 @@ const PitScout = ({route, navigation}) =>
                     </View>
 
                     {/* Rudamentary spacer */}
+
                     <View style={{marginBottom: 5*vh}}/> 
-                </View>
                 
                 <View style={{...globalContainerStyles.centerContainer, backgroundColor: "#00000000"}}>
                     <TTButton

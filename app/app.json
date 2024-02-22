@@ -3,7 +3,7 @@
     "name": "4829TigerScout",
     "slug": "tigerscouting",
     "privacy": "public",
-    "description": "An easy, open source cloud-integrated scouting app made by 5013.",
+    "description": "An easy, open source cloud-integrated scouting app made by 4829.",
     "version": "1.0.6",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -27,7 +27,7 @@
       "bundleIdentifier": "com.team4829.tigerscout",
       "buildNumber":"1",
       "infoPlist": {
-        "NSCameraUsageDescription": "Allow TrobotScout to access your camera. TrobotScout uses the camera exclusively to scan QR codes and allows you to connect to cloud storage buckets."
+        "NSCameraUsageDescription": "Allow TigerScout to access your camera. TigerScout uses the camera exclusively to scan QR codes and allows you to connect to cloud storage buckets."
       }
     },
     "android": {
