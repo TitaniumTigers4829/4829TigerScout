@@ -5,50 +5,21 @@ import { getStorage } from 'firebase/storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as FileSystem from 'expo-file-system';
+import * as MediaLibrary from 'expo-media-library'
+import * as Sharing from 'expo-sharing';
+
 
 // Component Imports
 import { fU, vh, vw } from '../../common/Constants';
 import { ColorScheme as CS } from '../../common/ColorScheme';
 import { TTGradient, TTConfirmation, TTLoading, TTWarning, TTAlert } from '../components/ExtraComponents';
 import { initializeFirebaseFromSettings, uploadStringToCloud, getAllFilesFromRef, uploadMultipleStringsToCloud } from '../../common/CloudStorage';
-import { deleteMultipleDataKeys, loadMatchData, removeNonMatchKeys, readData, saveMatchData, readMultipleDataKeys, loadSettings, deleteData } from '../../common/LocalStorage';
+import { deleteMultipleDataKeys, loadMatchData, removeNonMatchKeys, readData, saveMatchData, readMultipleDataKeys, readMultipleDataKeysString, loadSettings, deleteData, loadPitData } from '../../common/LocalStorage';
 import { TTButton, TTCheckbox, TTPushButton, TTSimpleCheckbox } from '../components/ButtonComponents';
 import { globalButtonStyles, globalInputStyles, globalTextStyles, globalContainerStyles } from '../../common/GlobalStyleSheet';
 
-
-// Serializes the data to a string and saves it
-const saveRandomData = async () => {
-	const matchData = [
-		// Pre Round
-		Math.round(Math.random() * 30), 
-		Math.round(Math.random() * 3),
-		Math.round(Math.random() * 2), 
-		Math.round(Math.random()), 
-
-		// Auto
-		Math.round(Math.random()),
-		Math.round(Math.random()),
-		Math.round(Math.random()),
-		Math.round(Math.random() * 3),
-		Math.round(Math.random() * 3),
-		Math.round(Math.random() * 3),
-		Math.round(Math.random() * 3),
-
-		// Teleop
-		Math.round(Math.random() * 3),
-		Math.round(Math.random() * 3),
-		Math.round(Math.random() * 3),
-		Math.round(Math.random() * 3),
-		Math.round(Math.random()),
-		Math.round(Math.random()),
-
-		// After Round
-		"1246890!@#$%^&*()<>?:",
-	];
-
-	// Save data using hash
-	await saveMatchData(matchData)
-};
+const fileDir = FileSystem.documentDirectory;
 
 // Main function
 const LocalData = ({route, navigation}) => {
@@ -118,6 +89,7 @@ const LocalData = ({route, navigation}) => {
 				return filename;
 			}
 		);
+		console.log(filenames);		
 		await uploadMultipleStringsToCloud(storage, multiStringData, filenames);
 
 		setLoadingVisible(false);
@@ -127,6 +99,57 @@ const LocalData = ({route, navigation}) => {
 		return;
 	}
 
+	// Upload all the data to fileSystem
+    const uploadDataToFileSystem = async () => {
+		setLoadingContent([null, `Uploading ScoutingData to Filesystem...`]);
+		setLoadingVisible(true);
+
+		let multiStringData = [];
+		let matchKeys2 = matchKeys.filter((keyName) => {return keyName.slice(0, 3) == "@MD"});
+		try {
+			multiStringData = await readMultipleDataKeys(matchKeys2);
+		} catch (e) {
+			setLoadingVisible(false);
+			setWarningContent([null, `Couldn't get a connection to file system!\n${e}`, null]);
+			setWarningVisible(true);
+			return;
+		}
+
+		const status  = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
+		const localFileUri = fileDir + "ScoutingFile.txt";
+
+		var dataString ='DataType|ScouterName|Device|TeamNumber|MatchNumber|MatchType|AllianceColor|';
+		dataString =dataString + 'Leave|CenterlineNoteScored|'
+		dataString =dataString + 'AutoSpeaker|AutoSpeakerMisses|';
+		dataString =dataString + 'AutoAmp|AutoAmpMisses|';
+		dataString =dataString + 'TeleSpeaker|TeleAmplifiedSpeaker|TeleSpeakerMisses|';		
+		dataString =dataString + 'TeleAmp|TeleAmpMisses|';
+		dataString =dataString + 'Trap|StageClimb|Broke|NoteStuck|EventKey|Comments\n';
+		var i ;
+		for(i=0; i < multiStringData.length; i++){
+			dataString += `${multiStringData[i]}\n`;
+		}
+			
+		await FileSystem.writeAsStringAsync(localFileUri, dataString, { encoding: FileSystem.EncodingType.UTF8 });
+
+		
+		if (status.granted) {
+			await FileSystem.StorageAccessFramework.createFileAsync(status.directoryUri,"ScoutingFile.txt", "text/plain")
+			.then ( async (localFileUri) => {
+				await FileSystem.writeAsStringAsync(localFileUri, dataString, { encoding: FileSystem.EncodingType.UTF8 });
+			})
+			.catch (e => console.log(e));
+
+		} else {
+			Sharing.shareAsync(localFileUri)
+		}
+
+		setLoadingVisible(false);
+		setAlertContent(["Success!", `Successfully uploaded file to the filesystem!`, null]);
+		setTimeout(() => setAlertVisible(true), 500);
+
+		return;
+	}
 
 	// Loads all keys and removes any that don't contain matchdata
 	React.useEffect(() => {
@@ -139,14 +162,6 @@ const LocalData = ({route, navigation}) => {
         loadKeys();
         initializeFirebaseFromSettings();
 		wrapper();
-
-		// Used for testing only, should be removed
-		const UploadFakeRandomData = async () => {
-			for (let i = 0; i < 200; i++) {
-				await saveRandomData();
-			}
-		}
-		// UploadFakeRandomData();
 
     }, []);
 
@@ -205,8 +220,13 @@ const LocalData = ({route, navigation}) => {
 								buttonStyle={{...globalButtonStyles.matchKeyButton, width: 80 * vw, marginVertical: 1 * vh}}
 								textStyle={{...globalTextStyles.matchKeyText}}
 								onPress={async () => {
-									const matchData = await loadMatchData(keyName)
-									navigation.navigate("ScoutTeam", {matchData: matchData})
+									if (keyName.slice(0, 3) == "@MD"){
+										const matchData = await loadMatchData(keyName)
+										navigation.navigate("ScoutTeam", {matchData: matchData})
+									} else {
+										const pitData = await loadPitData(keyName)
+										navigation.navigate("PitScout", {pitData: pitData})
+									}
 								}}
 							/>
 							<TTButton
@@ -232,7 +252,21 @@ const LocalData = ({route, navigation}) => {
 					}}
 				/>}
 				<View style={{marginBottom: 4*vh}}></View>
+				
 			</ScrollView>
+
+			{/* Second to bottom button */}
+			<View style={{backgroundColor: CS.transparent}}>
+				<TTGradient/>
+
+					<TTButton
+						text="Download Data to File"
+						buttonStyle={{...globalButtonStyles.primaryButton, width: "90%", margin: 2 * vh}}
+						textStyle={{...globalTextStyles.primaryText, fontSize: 24 * fU}}
+						onPress={() => {uploadDataToFileSystem()}}
+					/>
+		
+			</View>
 
 			{/* Bottom button */}
 			<View style={{backgroundColor: CS.transparent}}>

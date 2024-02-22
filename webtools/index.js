@@ -119,6 +119,76 @@ const generateQRFromData = () => {
 window.generateQRFromData = generateQRFromData;
 
 
+const generateTbaQRFromData = () => {
+    // Canvas and QRText
+    const canvas = document.getElementById("QRcanvas2");
+    const QRText = document.getElementById("QRtext2");
+    const width = canvas.clientWidth;
+
+    // Getting inputs
+    const tbaKey = document.getElementById("TBAkey").value;
+    const tbaEventKey = document.getElementById("TBAEventKey").value;
+    const qrPassword = document.getElementById("TBApassword").value;
+    
+
+    // Error checking
+    if (tbaKey.length === 0) {
+        showError("Please enter TBA Key.");
+        return;
+    };
+    if (tbaEventKey.length === 0) {
+        showError("You need to enter the Event Key.");
+        return;
+    }
+
+    if (qrPassword.length === 0) {
+        showError("You need a password.");
+        return;
+    };
+
+    const tbaSettings = {
+        tbaKey: tbaKey,
+        tbaEventKey: tbaEventKey
+    };
+
+    // Generate codes
+    const tbaCode = CryptoJS.AES.encrypt(JSON.stringify(tbaSettings), qrPassword).toString();
+    QRCode.toCanvas(
+        canvas, 
+        tbaCode,
+        {
+            width: width,
+            errorCorrectionLevel: "M"
+        }, 
+        (e) => {
+            if (e) console.error(e);
+        }
+    );
+    QRText.innerHTML = tbaCode;
+
+    // Download
+    const qrDownload2 = document.getElementById("QRdownload2");
+    QRCode.toDataURL(
+        tbaCode,
+        {
+            width: 2000,
+            height: 2000,
+            errorCorrectionLevel: "M"
+        }, 
+        (e, url) => {
+            if (e) {
+                console.error(e);
+                return;
+            }
+            qrDownload2.style.display = "block";
+            qrDownload2.href = url;
+        }
+    );
+    
+    return;
+}
+window.generateTbaQRFromData = generateTbaQRFromData;
+
 const downloadDataToXLSX = async () => {
     const bucketCloudConfig = document.getElementById("XLSXcloudConfig").value;
     const bucketSubpath = document.getElementById("XLSXsubpath").value;
@@ -203,7 +273,7 @@ const downloadDataToXLSX = async () => {
     );
 
     // Split
-    const delimiter = String.fromCharCode(29);
+    const delimiter = String.fromCharCode(124);
     const deserializeData = (data) => {    
         return data.split(delimiter);
     };
@@ -211,44 +281,97 @@ const downloadDataToXLSX = async () => {
     // Downloading into an organized object
     const fileContents = {};
     for (const stringData of allFileData) {
+
         const data = deserializeData(stringData);
-        const teamNumber = data[0];
-        if (fileContents[teamNumber] == null) fileContents[teamNumber] = [data];
-        else fileContents[teamNumber].push(data);
+        const eventNumber = data[0];
+
+        if (fileContents[eventNumber] == null) fileContents[eventNumber] = [data];
+        else fileContents[eventNumber].push(data);
     }
 
-    // Make a sheet from each team
-    const workbook = XLSX.utils.book_new();
+    try {
+        // Make a sheet from each team
+        const workbook = XLSX.utils.book_new();
 
-    // Constants
-    const matchTypeValues = ["Practice", "Qualifiers", "Finals"];
-    const teamColorValues = ["Red", "Blue"]
+        // Constants
+        const matchTypeValues = ["Practice", "Qualifiers", "Finals"];
+        const deviceValues = ["Blue1","Blue2","Blue3","Red1","Red2","Red3"];
+        const stageValues = ["None","Park","Onstage","Onstage Buddy"];
 
-    for (const team of Object.keys(fileContents)) {
-        const teamSheet = XLSX.utils.aoa_to_sheet([
-            [
-                "Match Number", "Match Type", "Color", 
-                "Taxi?", "Auto Docked?", "Auto Engaged?", "Auto Cube High", "Auto Cube Mid", "Auto Cube Low", "Auto Cone High", "Auto Cone Mid", "Auto Cone Low", "Auto Misses",
-                "Teleop Cube High", "Teleop Cube Mid", "Teleop Cube Low", "Teleop Cone High", "Teleop Cone Mid", "Teleop Cone Low", "Teleop Misses", "Teleop Docked?", "Teleop Engaged?",
-                "Comments"
-            ],
-            ...(fileContents[team].map(match => [
-                match[1],
-                matchTypeValues[match[2]],
-                teamColorValues[match[3]],
-                Number(match[4]) ? true : false,
-                Number(match[5]) ? true : false,
-                Number(match[6]) ? true : false,
-                ...match.slice(7, 21),
-                Number(match[21]) ? true : false,
-                Number(match[22]) ? true : false,
-                match[23]
-            ]))
-        ]);
+        for (const dataType of Object.keys(fileContents)) {
+            if(dataType == "Match") {
+                const Sheet = XLSX.utils.aoa_to_sheet([
+                    ["DataType","ScouterName","Device","TeamNumber","MatchNumber","MatchType","AllianceColor",
+                        "Leave","CenterlineNoteScored",
+                        "AutoSpeaker","AutoSpeakerMiss","AutoAmp","AutoAmpMiss",
+                        "TeleSpeaker","TeleSpeakerMiss","TeleAmpifiedSpeaker","TeleAmp","TeleAmpMiss",
+                        "Trap","Stage/Climb","Broke","NoteStuck","DriverSkill","EventKey","Comments"],
+                    ...(fileContents[dataType].map(match => [
+                        match[0],
+                        match[1],
+                        deviceValues[match[2]],
+                        match[3],
+                        match[4],
+                        matchTypeValues[match[5]],
+                        match[6],
+                        Number(match[7]) ? true : false, //Leave
+                        Number(match[8]) ? true : false, //CemterlineNoteScored
+                        Number(match[9]), //AutoSpeaker
+                        Number(match[10]), //AutoSpeakerMiss
+                        Number(match[11]), //AutoAmp
+                        Number(match[12]), //AutoAmpMiss
+                        Number(match[13]), //TeleSpeaker
+                        Number(match[14]), //TeleAmplifiedSpeaker
+                        Number(match[15]), //TeleSpeakerMiss
+                        Number(match[16]), //TeleAmp
+                        Number(match[17]), //TeleAmpMiss
+                        Number(match[18]), //Trap
+                        stageValues[match[19]], //Stage/Climb
+                        Number(match[20]), //Broke
+                        Number(match[21]), //Note Stuck
+                        Number(match[22]), //DriverSkill
+                        match[23], //EventKey
+                        match[24] //comment
+                    ]))
+                ]);
 
-        XLSX.utils.book_append_sheet(workbook, teamSheet, `Team ${team}`);
+                XLSX.utils.book_append_sheet(workbook, Sheet, dataType);
+            }
+            if(dataType == "Pit") {
+                const pitSheet = XLSX.utils.aoa_to_sheet([
+                    ["DataType","ScouterName","TeamNumber",
+                    "DriveTrain","Motor","Batteries","weight",
+                    "Language","CodeParadigm","HumanPlayer",
+                    "UnderStage","Stage/Climb","ShootingLocations","OverallStatus",
+                    "EventKey","Comments","Photos"],
+                    ...(fileContents[dataType].map(pit => [
+                        pit[0], //DataType
+                        pit[1], //ScouterName
+                        pit[2], //TeamNumber
+                        pit[3], //DriveTrain
+                        pit[4], //Motor
+                        pit[5], //Batteries
+                        pit[6], //Weight
+                        pit[7], //Language
+                        pit[8], //CodeParadigm
+                        pit[9], //HumanPlayer
+                        pit[10], //UnderStage
+                        pit[11], //StageClimb
+                        pit[12], //ShootingLocations
+                        pit[13], //OverallStatus
+                        pit[14], //eventkey
+                        pit[15], //comment
+                        pit[16] //photos
+                    ]))
+                ]);
+
+                XLSX.utils.book_append_sheet(workbook, pitSheet, dataType);
+            }
+        }
+
+        XLSX.writeFile(workbook, "CloudData.xlsx");
+    } catch(e) {
+        showError(e);
     }
-
-    XLSX.writeFile(workbook, "CloudData.xlsx");
 }
 window.downloadDataToXLSX = downloadDataToXLSX;

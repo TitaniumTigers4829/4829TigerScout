@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "TigerScout",
-    "slug": "TigerScout",
+    "name": "4829TigerScout",
+    "slug": "tigerscouting",
     "privacy": "public",
-    "description": "An easy, open source cloud-integrated scouting app made by 4829.",
-    "version": "1.0.1",
+    "description": "An easy, open source cloud-integrated scouting app made by 5013.",
+    "version": "1.0.6",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -15,16 +15,19 @@
     },
     "updates": {
       "fallbackToCacheTimeout": 0,
-      "url": "https://u.expo.dev/156bb3a7-5cf2-4e1d-b89f-e1e5a1f45f12"
+      "url": "https://u.expo.dev/497c6dc6-9bab-4f75-a754-ee8bf537238c"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
       "supportsTablet": true,
+      "googleServicesFile": "./GoogleService-Info.plist",
+
       "bundleIdentifier": "com.team4829.tigerscout",
+      "buildNumber":"1",
       "infoPlist": {
-        "NSCameraUsageDescription": "Allow TigerScout to access your camera. TigerScout uses the camera exclusively to scan QR codes and allows you to connect to cloud storage buckets."
+        "NSCameraUsageDescription": "Allow TrobotScout to access your camera. TrobotScout uses the camera exclusively to scan QR codes and allows you to connect to cloud storage buckets."
       }
     },
     "android": {
@@ -33,7 +36,11 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#1E1E1E"
-      }
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -48,7 +55,17 @@
         {
           "cameraPermission": "Allow TigerScout to access your camera. TigerScout uses the camera exclusively to scan QR codes and allows you to connect to cloud storage buckets."
         }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
       ]
-    ]
-  }
+    ],
+    "sdkVersion": "49.0.0"
+  },
+  "name": "tigerscout2.0"
 }
