@@ -37,7 +37,6 @@ const PitScout = ({route, navigation}) =>
     const [comments, setComments] = React.useState("");
     const [eventKey, setEventKey] = React.useState("");
     const [dataType, setDataType] = React.useState("Pit");
-    const [uploadPhoto, setUploadPhoto] = React.useState(false);
    
     function toggleCameraType() {
         setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
@@ -119,13 +118,8 @@ const PitScout = ({route, navigation}) =>
             };
 
             setTeamNumber("");   
-            setUploadPhoto(false);
 
-            const getCameraPermissions = async () => {
-                const { status } = await Camera.requestCameraPermissionsAsync();
-                requestPermission(status === PermissionStatus.GRANTED);
-            };
-            getCameraPermissions();
+          
 
         };
         
@@ -145,16 +139,8 @@ const PitScout = ({route, navigation}) =>
         <View style={globalContainerStyles.topContainer}>
         <TTGradient/>
 
-        <Modal
-            animationType="slide"
-            transparent={false}
-            visible={uploadPhoto}
-            onRequestClose={() => {
-                Alert.alert('Modal has been closed.');
-                setUploadPhoto(false);
-            }}>
+        
             
-            </Modal>
             {/* All scouting settings go in the scroll view */}
             <KeyboardAvoidingView style={{flex: 1}} behavior="height">
             <ScrollView keyboardShouldPersistTaps='handled' ref={scrollRef}>
