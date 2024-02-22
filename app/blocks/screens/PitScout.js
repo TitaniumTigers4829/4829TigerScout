@@ -23,29 +23,22 @@ const PitScout = ({route, navigation}) =>
     const [motors, setMotors] = React.useState("Motors");
     const motorValues = ["Brushless","Brushed","Both"];    
     const [batteries, setBatteries] = React.useState("");
-    const [language, setLanguage] = React.useState("Language");
-    const languageValues = ["Java", "C/C++", "Labview", "Python", "Other"];
-    const [codeParadigm, setCodeParadigm] = React.useState("Code Paradigm");
-    const codeParadigmValues = ["Command", "Timed", "Other"];
+    const [weight, setWeight] = React.useState("");
     const [humanPlayer, setHumanPlayer] = React.useState("Human Player");
-    const humanPlayerValues = ["Own","Other"];
-    const [overallStatus, setOverallStatus] = React.useState("");
     const [climb, setClimb] = React.useState("Climb");
     const climbValues = ["Center","Edge", "Both", "None"];
+    const [trap, setTrap] = React.useState("Trap");
+    const trapValues = ["Climb","Shoot", "None"];
     const [underStage, setUnderStage] = React.useState("");
+    const [amp, setAmp] = React.useState("");
     const [shootingLocation, setShootingLocations] = React.useState("Shooting Area");
     const ShootingLocationValues = ["Subwoofer", "Mid", "Far", "Sub & Mid", "All", "None"];
-    const [weight,setWeight] = React.useState("");
 
     const [comments, setComments] = React.useState("");
     const [eventKey, setEventKey] = React.useState("");
     const [dataType, setDataType] = React.useState("Pit");
     const [uploadPhoto, setUploadPhoto] = React.useState(false);
-    const [type, setType] = React.useState(CameraType.back);
-    const [permission, requestPermission] = Camera.useCameraPermissions();
-    const [photos, setPhotos] = React.useState([]);
-    const [photoIndex, setPhotoIndex] = React.useState(0);
-
+   
     function toggleCameraType() {
         setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
     }
@@ -69,18 +62,15 @@ const PitScout = ({route, navigation}) =>
             formatNameState(motors), //4
             formatNameState(batteries), //5
             formatNumericState(weight), //6
-            formatNameState(language), //7
-            formatNameState(codeParadigm), //8
-            formatNameState(humanPlayer), //9
-            underStage ? 1 : 0, //10
-            formatNameState(climb), //11
-            formatNameState(shootingLocation), //12
-            formatNumericState(overallStatus), //13
+            underStage ? 1 : 0, //7
+            amp ? 1 : 0, //8
+            formatNameState(climb), //9
+            formatNameState(trap), //10
+            formatNameState(shootingLocation), //11
 
             // After Round
-            eventKey, //14
-            comments, //15
-            photos, //16
+            eventKey, //12
+            comments, //13
         ];
 
         // Save data using hash
@@ -106,22 +96,17 @@ const PitScout = ({route, navigation}) =>
         setMotors(data[4]),
         setBatteries(data[5]),
         setWeight(data[6]),
-        setLanguage(data[7]),
-        setCodeParadigm(data[8]),
-        setHumanPlayer(data[9]),
-        setUnderStage( Number(data[10]) ? true : false ),
-        setClimb(data[11]),
-        setShootingLocations(data[12]),
-        setOverallStatus(data[13]),
+        setUnderStage( Number(data[7]) ? true : false ),
+        setAmp( Number(data[8]) ? true : false ),
+        setClimb(data[9]),
+        setTrap(data[10]),
+        setShootingLocations(data[11]),
 
         // After Round
         
-        setEventKey(data[14]);
-        setComments(data[15]);
+        setEventKey(data[12]);
+        setComments(data[13]);
 
-        if (data[16].length > 0) {           
-            setPhotos(data[16].split(","));
-        }
     }
 
     React.useEffect(() => {
@@ -252,45 +237,14 @@ const PitScout = ({route, navigation}) =>
                         />
                     </View>
 
-                    <View style={{...styles.rowAlignContainer, zIndex: 8}}>
 
-                    {/* language */}
-                        <TTDropdown 
-                            state={language} 
-                            setState={setLanguage} 
-                            items={languageValues}
-                            boxWidth={40*vw}
-                            boxHeight={5*vh}
-                            boxStyle={globalInputStyles.dropdownInput}
-                            textStyle={globalTextStyles.labelText}
-                            zIndex={8}
-                        />
-                    {/* structure */}
-                        <TTDropdown 
-                            state={codeParadigm} 
-                            setState={setCodeParadigm} 
-                            items={codeParadigmValues}
-                            boxWidth={40*vw}
-                            boxHeight={5*vh}
-                            boxStyle={globalInputStyles.dropdownInput}
-                            textStyle={globalTextStyles.labelText}
-                            zIndex={9}
-                        />
-                    </View>
+                   
+                   
 
                     <View style={{...styles.rowAlignContainer, zIndex: 7}}>
 
                     {/* human player */}
-                        <TTDropdown 
-                            state={humanPlayer} 
-                            setState={setHumanPlayer} 
-                            items={humanPlayerValues}
-                            boxWidth={40*vw}
-                            boxHeight={5*vh}
-                            boxStyle={globalInputStyles.dropdownInput}
-                            textStyle={globalTextStyles.labelText}
-                            zIndex={5}
-                        />
+                       
 
                     {/* under stage */}
                         <TTSimpleCheckbox 
@@ -302,11 +256,36 @@ const PitScout = ({route, navigation}) =>
                             boxUncheckedStyle={{...globalButtonStyles.checkboxUncheckedStyle}}
                             boxCheckedStyle={{...globalButtonStyles.checkboxCheckedStyle}}
                         />
+                            {/* under stage */}
+                            <TTSimpleCheckbox 
+                            state={amp}
+                            setState={setAmp}
+                            text="Amp" 
+                            overallStyle={{height: "100%", alignSelf: "center"}}
+                            textStyle={{...globalTextStyles.labelText}}
+                            boxUncheckedStyle={{...globalButtonStyles.checkboxUncheckedStyle}}
+                            boxCheckedStyle={{...globalButtonStyles.checkboxCheckedStyle}}
+                        />
+                 
+
                     </View>
+                    <View style={{...styles.rowAlignContainer, zIndex: 6}}>
+                       {/* trap */}
+                       <TTDropdown 
+                            state={trap} 
+                            setState={setTrap} 
+                            items={trapValues}
+                            boxWidth={40*vw}
+                            boxHeight={5*vh}
+                            boxStyle={globalInputStyles.dropdownInput}
+                            textStyle={globalTextStyles.labelText}
+                            zIndex={5}
+                        />
+                        </View>
                     <View style={{...styles.rowAlignContainer, zIndex: 6}}>
 
                     {/* climb */}
-                        <TTDropdown 
+                    <TTDropdown 
                             state={climb} 
                             setState={setClimb} 
                             items={climbValues}
@@ -316,7 +295,7 @@ const PitScout = ({route, navigation}) =>
                             textStyle={globalTextStyles.labelText}
                             zIndex={5}
                         />
-
+                    
                     {/* shooting locations */}
                         <TTDropdown 
                             state={shootingLocation} 

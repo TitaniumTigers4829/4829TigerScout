@@ -27,7 +27,7 @@ const TeamAnalytics = ({route, navigation}) => {
             if (match[24].length !== 0) return false;
         }
         for (const pit of route.params.pitData) {
-            if (pit[15].length !==0)return false;
+            if (pit[13].length !==0)return false;
         }
         return true;
     }
@@ -70,7 +70,7 @@ const TeamAnalytics = ({route, navigation}) => {
             ) return true;
         }
         for (const pit of route.params.pitData) {
-            const comment = pit[15].toLowerCase().replace(/’/g, "'");
+            const comment = pit[13].toLowerCase().replace(/’/g, "'");
             if (
                 comment.includes("dnp") || 
                 comment.includes("don't pick") || 
@@ -236,16 +236,15 @@ const TeamAnalytics = ({route, navigation}) => {
                         <Text style={styles.dataLabel}>Weight <Text style={styles.dataText}>{props.pitData[6]}</Text></Text>
                     </View>
                     <View style={styles.rowAlignContainer}>
-                        <Text style={styles.dataLabel}>Language <Text style={styles.dataText}>{props.pitData[7]}</Text></Text>
-                        <Text style={styles.dataLabel}>Paradigm <Text style={styles.dataText}>{props.pitData[8]}</Text></Text>
+                    <Text style={styles.dataLabel}>Under Stage <Text style={styles.dataText}>{props.pitData[7] == 1 ? "Yes" : "No"}</Text></Text>
+                    <Text style={styles.dataLabel}>Amp <Text style={styles.dataText}>{props.pitData[8] == 1 ? "Yes" : "No"}</Text></Text>
                     </View>
                     <View style={styles.rowAlignContainer}>
-                        <Text style={styles.dataLabel}>Human Player <Text style={styles.dataText}>{props.pitData[9]}</Text></Text>
-                        <Text style={styles.dataLabel}>EndGame <Text style={styles.dataText}>{props.pitData[11]}</Text></Text>
+                        <Text style={styles.dataLabel}>Climb <Text style={styles.dataText}>{props.pitData[9]}</Text></Text>
+                        <Text style={styles.dataLabel}>Trap <Text style={styles.dataText}>{props.pitData[10]}</Text></Text>
                     </View>
                     <View style={styles.rowAlignContainer}>
-                        <Text style={styles.dataLabel}>Under Stage <Text style={styles.dataText}>{props.pitData[10] == 1 ? "Yes" : "No"}</Text></Text>
-                        <Text style={styles.dataLabel}>Shooting <Text style={styles.dataText}>{props.pitData[12]}</Text></Text>
+                        <Text style={styles.dataLabel}>Shooting <Text style={styles.dataText}>{props.pitData[11]}</Text></Text>
                     </View>
                 </View>
 
@@ -414,7 +413,7 @@ const TeamAnalytics = ({route, navigation}) => {
                         );
                     })}
                     {route.params.pitData.map((pit, pitindex) => {
-                        const comment = pit[15];
+                        const comment = pit[13];
                         if (comment.length !== 0) return (
                             <View key={pitindex}>
                                 <Text style={{...globalTextStyles.labelText, margin: 0.5*vh}}>"{comment}"</Text>

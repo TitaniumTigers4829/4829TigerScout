@@ -97,14 +97,7 @@ const CloudData = ({route, navigation}) => {
         return teamAverages;
     }
 
-    const coneCounterSettings = {
-        stateMin: 0,
-        stateMax: 300,
-        overallStyle: {justifySelf: "center", marginTop: 0*vh},
-        topButtonProps: {text: "+", buttonStyle: [{...globalButtonStyles.topCounterButton, backgroundColor: CS.accent2},{height: 5*vh,width: 15*vw, padding: 0}], textStyle: globalTextStyles.secondaryText},
-        inputProps: {style: [globalInputStyles.numberInput, globalTextStyles.labelText, {height: 5*vh, width: 15*vw, margin: 0}]},
-        bottomButtonProps: {text: "-", buttonStyle: [{...globalButtonStyles.bottomCounterButton, backgroundColor: CS.accent2}, {height: 5*vh,width: 15*vw, padding: 0}], textStyle: globalTextStyles.secondaryText}
-    }
+
 
     const getMatchTeams = (filterKey) =>
     {

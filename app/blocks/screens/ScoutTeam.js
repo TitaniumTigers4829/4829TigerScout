@@ -306,19 +306,20 @@ const ScoutTeam = ({route, navigation}) => {
                     <Text style={styles.sectionHeader}>Pre-Round</Text>
 
                     <View style={{...styles.rowAlignContainer, zIndex: 7}}>
-                        {/* ScouterName */}
+                        {/* Team Number */}
                  
                         <TTTextInput
-                            state={scouterName}
-                            setState={setScouterName}
-                            maxLength={30}
-                            placeholder="Scouter Name"
-                            placeholderTextColor={`${CS.light1}50`}
-                            style={[
-                                {...globalInputStyles.numberInput, width: "45%", height: "75%"},
-                                globalTextStyles.labelText
-                            ]}
-                        />
+                          state={teamNumber}
+                          setState={setTeamNumber}
+                          stateMax={9999}
+                          maxLength={4}
+                          placeholder="Team #"
+                          placeholderTextColor={`${CS.light1}50`}
+                          style={[
+                            {...globalInputStyles.numberInput, width: "45%", height: "60%"},
+                            globalTextStyles.labelText
+                        ]}/>
+                           
                     </View>
 
                     <View style={{...styles.rowAlignContainer, zIndex: 7}}>
@@ -359,15 +360,15 @@ const ScoutTeam = ({route, navigation}) => {
                             style={styles.topNumberInput}
                         />
                      
-                        {/* Team number */}
-                        <TTNumberInput
-                            state={teamNumber}
-                            setState={setTeamNumber}
-                            stateMax={9999}
-                            maxLength={4}
-                            placeholder="Team #"
+                        {/* Scouter Name */}
+                        <TTTextInput
+                        state={scouterName}
+                            setState={setScouterName}
+                            maxLength={30}
+                            placeholder="Scouter Name"
                             placeholderTextColor={`${CS.light1}50`}
                             style={styles.topNumberInput}
+                      
                         />
                     </View>
 
