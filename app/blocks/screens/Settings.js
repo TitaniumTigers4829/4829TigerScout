@@ -135,7 +135,7 @@ const Settings = ({route, navigation}) => {
             <View style={globalContainerStyles.centerContainer}>
                 <TTGradient/>
                 <Text style={{...globalTextStyles.secondaryText, fontSize: 30, marginHorizontal: 3*vh}}>
-                    TrobotScout doesn't have access to your camera!
+                    TigerScout doesn't have access to your camera!
                 </Text>
                 <Text style={{...globalTextStyles.labelText, color: `${CS.light1}80`, margin: 3*vh}}>
                 Before you're able to connect to a bucket, you need to enable camera permissions in your phone's settings.
