@@ -228,27 +228,24 @@ const TeamAnalytics = ({route, navigation}) => {
                     </Text>
 
                     <View style={styles.rowAlignContainer}>
-                        <Text style={styles.dataLabel}>DriveTrain-<Text style={styles.dataText}>{props.pitData[3]}</Text></Text>
-                        <Text style={styles.dataLabel}>Motors-<Text style={styles.dataText}>{props.pitData[4]}</Text></Text>
+                        <Text style={styles.dataLabel}>DriveTrain <Text style={styles.dataText}>{props.pitData[3]}</Text></Text>
+                        <Text style={styles.dataLabel}>Motors <Text style={styles.dataText}>{props.pitData[4]}</Text></Text>
                     </View>
                     <View style={styles.rowAlignContainer}>
-                        <Text style={styles.dataLabel}># Batteries-<Text style={styles.dataText}>{props.pitData[5]}</Text></Text>
-                        <Text style={styles.dataLabel}>Weight-<Text style={styles.dataText}>{props.pitData[6]}</Text></Text>
+                        <Text style={styles.dataLabel}>Batteries <Text style={styles.dataText}>{props.pitData[5]}</Text></Text>
+                        <Text style={styles.dataLabel}>Weight <Text style={styles.dataText}>{props.pitData[6]}</Text></Text>
                     </View>
                     <View style={styles.rowAlignContainer}>
-                        <Text style={styles.dataLabel}>Language-<Text style={styles.dataText}>{props.pitData[7]}</Text></Text>
-                        <Text style={styles.dataLabel}>Paradigm-<Text style={styles.dataText}>{props.pitData[8]}</Text></Text>
+                        <Text style={styles.dataLabel}>Language <Text style={styles.dataText}>{props.pitData[7]}</Text></Text>
+                        <Text style={styles.dataLabel}>Paradigm <Text style={styles.dataText}>{props.pitData[8]}</Text></Text>
                     </View>
                     <View style={styles.rowAlignContainer}>
-                        <Text style={styles.dataLabel}>Human Player-<Text style={styles.dataText}>{props.pitData[9]}</Text></Text>
-                        <Text style={styles.dataLabel}>EndGame-<Text style={styles.dataText}>{props.pitData[11]}</Text></Text>
+                        <Text style={styles.dataLabel}>Human Player <Text style={styles.dataText}>{props.pitData[9]}</Text></Text>
+                        <Text style={styles.dataLabel}>EndGame <Text style={styles.dataText}>{props.pitData[11]}</Text></Text>
                     </View>
                     <View style={styles.rowAlignContainer}>
-                        <Text style={styles.dataLabel}>Under Stage-<Text style={styles.dataText}>{props.pitData[10] == 1 ? "Yes" : "No"}</Text></Text>
-                        <Text style={styles.dataLabel}>Shooting-<Text style={styles.dataText}>{props.pitData[12]}</Text></Text>
-                    </View>
-                    <View style={styles.rowAlignContainer}>
-                        <Text style={styles.dataLabel}>Overall Ranking-<Text style={styles.dataText}>{props.pitData[13]}</Text></Text>
+                        <Text style={styles.dataLabel}>Under Stage <Text style={styles.dataText}>{props.pitData[10] == 1 ? "Yes" : "No"}</Text></Text>
+                        <Text style={styles.dataLabel}>Shooting <Text style={styles.dataText}>{props.pitData[12]}</Text></Text>
                     </View>
                 </View>
 
@@ -258,7 +255,7 @@ const TeamAnalytics = ({route, navigation}) => {
                         Comments
                     </Text>
                     <View style={styles.rowAlignContainer}>
-                        <Text style={styles.dataLabel}>"{props.pitData[15]}"</Text>
+                        <Text style={styles.dataLabel}>{props.pitData[15]}</Text>
                     </View>
                 </View>
 
