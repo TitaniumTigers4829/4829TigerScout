@@ -25,12 +25,9 @@ const ScoutTeam = ({route, navigation}) => {
     const [teamColor, setTeamColor] = React.useState("Team Color");
 
     const [taxi, setTaxi] = React.useState(false);
-    const [autoDocked, setAutoDocked] = React.useState(false);
-    const [autoEngaged, setAutoEngaged] = React.useState(false);
     const [autoPoints, setAutoPoints] = React.useState({
-        cubeHigh: "0", cubeMid: "0", cubeLow: "0", 
-        coneHigh: "0", coneMid: "0", coneLow: "0", 
-        misses: "0",
+        speaker: "0", speakerMisses: "0", 
+        amp: "0", ampMisses: "0", 
     });
     const setAutoPointParam = (parameter, value) => {
         const temp = {...autoPoints};
@@ -39,9 +36,8 @@ const ScoutTeam = ({route, navigation}) => {
     }
 
     const [telePoints, setTelePoints] = React.useState({
-        cubeHigh: "0", cubeMid: "0", cubeLow: "0", 
-        coneHigh: "0", coneMid: "0", coneLow: "0", 
-        misses: "0",
+        speaker: "0", speakerMisses: "0", 
+        amp: "0", ampMisses: "0", 
     });
     const setTelePointParam = (parameter, value) => {
         const temp = {...telePoints};
@@ -49,8 +45,8 @@ const ScoutTeam = ({route, navigation}) => {
         setTelePoints(temp);
     }
     
-    const [teleDocked, setTeleDocked] = React.useState(false);
-    const [teleEngaged, setTeleEngaged] = React.useState(false);
+    const [teleParked, setTelePark] = React.useState(false);
+    const [teleClimb, setTeleClimb] = React.useState(false);
     const [comments, setComments] = React.useState("");
 
     // Prevents nothing entries
@@ -69,26 +65,20 @@ const ScoutTeam = ({route, navigation}) => {
 
             // Auto
             taxi ? 1 : 0,
-            autoDocked ? 1 : 0,
-            autoEngaged ? 1 : 0,
-            formatNumericState(autoPoints.cubeHigh),
-            formatNumericState(autoPoints.cubeMid),
-            formatNumericState(autoPoints.cubeLow),
-            formatNumericState(autoPoints.coneHigh),
-            formatNumericState(autoPoints.coneMid),
-            formatNumericState(autoPoints.coneLow),
+            formatNumericState(autoPoints.speaker),
+            formatNumericState(autoPoints.speakerMisses),
+            formatNumericState(autoPoints.amp),
+            formatNumericState(autoPoints.ampMisses),
             formatNumericState(autoPoints.misses),
 
             // Teleop
-            formatNumericState(telePoints.cubeHigh),
-            formatNumericState(telePoints.cubeMid),
-            formatNumericState(telePoints.cubeLow),
-            formatNumericState(telePoints.coneHigh),
-            formatNumericState(telePoints.coneMid),
-            formatNumericState(telePoints.coneLow),
+            formatNumericState(telePoints.speaker),
+            formatNumericState(telePoints.speakerMisses),
+            formatNumericState(telePoints.amp),
+            formatNumericState(telePoints.ampMisses),
             formatNumericState(telePoints.misses),
-            teleDocked ? 1 : 0,
-            teleEngaged ? 1 : 0,
+            teleParked ? 1 : 0,
+            teleClimb ? 1 : 0,
 
             // After Round
             comments,
@@ -112,24 +102,21 @@ const ScoutTeam = ({route, navigation}) => {
 
         // Auto
         setTaxi(Number(data[4]) ? true : false);
-        setAutoDocked(Number(data[5]) ? true : false);
-        setAutoEngaged(Number(data[6]) ? true : false);
+        setauto(Number(data[5]) ? true : false);
         const autoPoints = {
-            cubeHigh: data[7], cubeMid: data[8], cubeLow: data[9],
-            coneHigh: data[10], coneMid: data[11], coneLow: data[12],
-            misses: data[13],
+            speaker: data[8], speakerMisses: data[9],
+            amp: data[11], ampMisses: data[12],
         }
         setAutoPoints(autoPoints);
 
         // Teleop
         const telePoints = {
-            cubeHigh: data[14], cubeMid: data[15], cubeLow: data[16],
-            coneHigh: data[17], coneMid: data[18], coneLow: data[19],
-            misses: data[20],
+            speaker: data[15], speakerMisses: data[16],
+            amp: data[18], ampMisses: data[19],
         }
         setTelePoints(telePoints);
-        setTeleDocked(Number(data[21]) ? true : false);
-        setTeleEngaged(Number(data[22]) ? true : false);
+        setTelePark(Number(data[21]) ? true : false);
+        setTeleClimb(Number(data[22]) ? true : false);
 
         // After Round
         setComments(data[23]);
@@ -152,7 +139,7 @@ const ScoutTeam = ({route, navigation}) => {
         inputProps: {style: [globalInputStyles.numberInput, globalTextStyles.labelText, {width: "80%", height: "25%", margin: 0}]},
         bottomButtonProps: {text: "-", buttonStyle: [globalButtonStyles.bottomCounterButton, {height: 8.5*vh, padding: 0}], textStyle: globalTextStyles.primaryText}
     }
-    const cubeCounterSettings = {
+    const speakerCounterSettings = {
         stateMin: 0,
         stateMax: 99,
         overallStyle: {justifySelf: "center", marginTop: 7*vh},
@@ -160,7 +147,7 @@ const ScoutTeam = ({route, navigation}) => {
         inputProps: {style: [globalInputStyles.numberInput, globalTextStyles.labelText, {width: "80%", height: "25%", margin: 0}]},
         bottomButtonProps: {text: "-", buttonStyle: [{...globalButtonStyles.bottomCounterButton, backgroundColor: CS.cube}, {height: 8.5*vh, padding: 0}], textStyle: globalTextStyles.primaryText}
     }
-    const coneCounterSettings = {
+    const ampCounterSettings = {
         stateMin: 0,
         stateMax: 99,
         overallStyle: {justifySelf: "center", marginTop: 7*vh},
@@ -236,7 +223,6 @@ const ScoutTeam = ({route, navigation}) => {
                 <View style={{height: 95*vh}}>
                     <TTGradient/>
 
-                    {/* Might also make title a block (?) */}
                     <Text style={styles.sectionHeader}>Auto</Text>
                     
                     <View style={{...styles.rowAlignContainer, flexGrow: 1}}>
@@ -244,69 +230,45 @@ const ScoutTeam = ({route, navigation}) => {
                         <View style={{...globalContainerStyles.columnContainer, flexGrow: 3}}>
                             {/* Cubes */}
                             <View style={{...styles.rowAlignContainer, flexGrow: 1}}>
+
                                 <View style={globalContainerStyles.columnContainer}>
-                                    <Text style={styles.counterHeader}>Cube High</Text>
+                                    <Text style={styles.counterHeader}>Speaker</Text>
                                     <TTCounterInput
-                                        state={autoPoints.cubeHigh}
-                                        setState={(v) => setAutoPointParam("cubeHigh", v)}
-                                        {...cubeCounterSettings}
+                                        state={autoPoints.speaker}
+                                        setState={(v) => setAutoPointParam("speaker", v)}
+                                        {...speakerCounterSettings}
                                     />
                                 </View>
 
                                 <View style={globalContainerStyles.columnContainer}>
-                                    <Text style={styles.counterHeader}>Cube Mid</Text>
+                                    <Text style={styles.counterHeader}>Speaker Misses</Text>
                                     <TTCounterInput
-                                        state={autoPoints.cubeMid}
-                                        setState={(v) => setAutoPointParam("cubeMid", v)}
-                                        {...cubeCounterSettings}
-                                    />
-                                </View>
-
-                                <View style={globalContainerStyles.columnContainer}>
-                                    <Text style={styles.counterHeader}>Cube Low</Text>
-                                    <TTCounterInput
-                                        state={autoPoints.cubeLow}
-                                        setState={(v) => setAutoPointParam("cubeLow", v)}
-                                        {...cubeCounterSettings}
+                                        state={autoPoints.speakerMisses}
+                                        setState={(v) => setAutoPointParam("speakerMisses", v)}
+                                        {...speakerCounterSettings}
                                     />
                                 </View>
                             </View>
                             {/* Cones */}
                             <View style={{...styles.rowAlignContainer, flexGrow: 1}}>
+                                
                                 <View style={globalContainerStyles.columnContainer}>
-                                    <Text style={styles.counterHeader}>Cone High</Text>
+                                    <Text style={styles.counterHeader}>Amp</Text>
                                     <TTCounterInput
-                                        state={autoPoints.coneHigh}
-                                        setState={(v) => setAutoPointParam("coneHigh", v)}
-                                        {...coneCounterSettings}
+                                        state={autoPoints.amp}
+                                        setState={(v) => setAutoPointParam("amp", v)}
+                                        {...ampCounterSettings}
                                     />
                                 </View>
                                 <View style={globalContainerStyles.columnContainer}>
-                                    <Text style={styles.counterHeader}>Cone Mid</Text>
+                                    <Text style={styles.counterHeader}>Amp Misses</Text>
                                     <TTCounterInput
-                                        state={autoPoints.coneMid}
-                                        setState={(v) => setAutoPointParam("coneMid", v)}
-                                        {...coneCounterSettings}
-                                    />
-                                </View>
-                                <View style={globalContainerStyles.columnContainer}>
-                                    <Text style={styles.counterHeader}>Cone Low</Text>
-                                    <TTCounterInput
-                                        state={autoPoints.coneLow}
-                                        setState={(v) => setAutoPointParam("coneLow", v)}
-                                        {...coneCounterSettings}
+                                        state={autoPoints.ampMisses}
+                                        setState={(v) => setAutoPointParam("ampMisses", v)}
+                                        {...ampCounterSettings}
                                     />
                                 </View>
                             </View>
-                        </View>
-                        {/* Misses */}
-                        <View style={globalContainerStyles.columnContainer}>
-                            <Text style={styles.counterHeader}>Misses</Text>
-                            <TTCounterInput
-                                state={autoPoints.misses}
-                                setState={(v) => setAutoPointParam("misses", v)}
-                                {...counterSettings}
-                            />
                         </View>
                     </View>
 
@@ -316,26 +278,6 @@ const ScoutTeam = ({route, navigation}) => {
                             state={taxi}
                             setState={setTaxi}
                             text="Taxi?" 
-                            overallStyle={{height: "100%", alignSelf: "center"}}
-                            textStyle={{...globalTextStyles.labelText, fontSize: 14*fU}}
-                            boxUncheckedStyle={{...globalButtonStyles.checkboxUncheckedStyle}}
-                            boxCheckedStyle={{...globalButtonStyles.checkboxCheckedStyle}}
-                        />
-                        {/* Docked */}
-                        <TTSimpleCheckbox 
-                            state={autoDocked}
-                            setState={setAutoDocked}
-                            text="Docked?" 
-                            overallStyle={{height: "100%", alignSelf: "center"}}
-                            textStyle={{...globalTextStyles.labelText, fontSize: 14*fU}}
-                            boxUncheckedStyle={{...globalButtonStyles.checkboxUncheckedStyle}}
-                            boxCheckedStyle={{...globalButtonStyles.checkboxCheckedStyle}}
-                        />
-                        {/* Engaged */}
-                        <TTSimpleCheckbox 
-                            state={autoEngaged}
-                            setState={setAutoEngaged}
-                            text="Engaged?" 
                             overallStyle={{height: "100%", alignSelf: "center"}}
                             textStyle={{...globalTextStyles.labelText, fontSize: 14*fU}}
                             boxUncheckedStyle={{...globalButtonStyles.checkboxUncheckedStyle}}
@@ -361,68 +303,42 @@ const ScoutTeam = ({route, navigation}) => {
                             {/* Cubes */}
                             <View style={{...styles.rowAlignContainer, flexGrow: 1}}>
                                 <View style={globalContainerStyles.columnContainer}>
-                                    <Text style={styles.counterHeader}>Cube High</Text>
-                                    <TTCounterInput
-                                        state={telePoints.cubeHigh}
-                                        setState={(v) => setTelePointParam("cubeHigh", v)}
-                                        {...cubeCounterSettings}
-                                    />
-                                </View>
-
-                                <View style={globalContainerStyles.columnContainer}>
                                     <Text style={styles.counterHeader}>Cube Mid</Text>
                                     <TTCounterInput
-                                        state={telePoints.cubeMid}
-                                        setState={(v) => setTelePointParam("cubeMid", v)}
-                                        {...cubeCounterSettings}
+                                        state={telePoints.speaker}
+                                        setState={(v) => setTelePointParam("speaker", v)}
+                                        {...speakerCounterSettings}
                                     />
                                 </View>
 
                                 <View style={globalContainerStyles.columnContainer}>
                                     <Text style={styles.counterHeader}>Cube Low</Text>
                                     <TTCounterInput
-                                        state={telePoints.cubeLow}
-                                        setState={(v) => setTelePointParam("cubeLow", v)}
-                                        {...cubeCounterSettings}
+                                        state={telePoints.speakerMisses}
+                                        setState={(v) => setTelePointParam("speakerMisses", v)}
+                                        {...speakerCounterSettings}
                                     />
                                 </View>
                             </View>
                             {/* Cones */}
                             <View style={{...styles.rowAlignContainer, flexGrow: 1}}>
                                 <View style={globalContainerStyles.columnContainer}>
-                                    <Text style={styles.counterHeader}>Cone High</Text>
-                                    <TTCounterInput
-                                        state={telePoints.coneHigh}
-                                        setState={(v) => setTelePointParam("coneHigh", v)}
-                                        {...coneCounterSettings}
-                                    />
-                                </View>
-                                <View style={globalContainerStyles.columnContainer}>
                                     <Text style={styles.counterHeader}>Cone Mid</Text>
                                     <TTCounterInput
-                                        state={telePoints.coneMid}
-                                        setState={(v) => setTelePointParam("coneMid", v)}
-                                        {...coneCounterSettings}
+                                        state={telePoints.amp}
+                                        setState={(v) => setTelePointParam("amp", v)}
+                                        {...ampCounterSettings}
                                     />
                                 </View>
                                 <View style={globalContainerStyles.columnContainer}>
                                     <Text style={styles.counterHeader}>Cone Low</Text>
                                     <TTCounterInput
-                                        state={telePoints.coneLow}
-                                        setState={(v) => setTelePointParam("coneLow", v)}
-                                        {...coneCounterSettings}
+                                        state={telePoints.ampMisses}
+                                        setState={(v) => setTelePointParam("ampMisses", v)}
+                                        {...ampCounterSettings}
                                     />
                                 </View>
                             </View>
-                        </View>
-                        {/* Misses */}
-                        <View style={globalContainerStyles.columnContainer}>
-                            <Text style={styles.counterHeader}>Misses</Text>
-                            <TTCounterInput
-                                state={telePoints.misses}
-                                setState={(v) => setTelePointParam("misses", v)}
-                                {...counterSettings}
-                            />
                         </View>
                     </View>
                 </View>
@@ -439,17 +355,17 @@ const ScoutTeam = ({route, navigation}) => {
                     
                     <View style={{...styles.rowAlignContainer, flexGrow: 0.3}}>
                         <TTSimpleCheckbox 
-                            state={teleDocked}
-                            setState={setTeleDocked}
-                            text="Docked?" 
+                            state={teleParked}
+                            setState={setTelePark}
+                            text="Parked?" 
                             overallStyle={{height: "100%", alignSelf: "center"}}
                             textStyle={{...globalTextStyles.labelText}}
                             boxUncheckedStyle={{...globalButtonStyles.checkboxUncheckedStyle}}
                             boxCheckedStyle={{...globalButtonStyles.checkboxCheckedStyle}}
                         />
                         <TTSimpleCheckbox 
-                            state={teleEngaged}
-                            setState={setTeleEngaged}
+                            state={teleClimb}
+                            setState={setTeleClimb}
                             text="Engaged?" 
                             overallStyle={{height: "100%", alignSelf: "center"}}
                             textStyle={{...globalTextStyles.labelText}}
