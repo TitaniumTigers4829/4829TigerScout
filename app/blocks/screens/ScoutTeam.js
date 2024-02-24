@@ -387,9 +387,12 @@ const ScoutTeam = ({route, navigation}) => {
                     <View style={{...styles.rowAlignContainer, flexGrow: 1}}>
                         <View style={{...globalContainerStyles.columnContainer, flexGrow: 3}}>
                             {/* speaker */}
+
                             <View style={{...styles.rowAlignContainer, flexGrow: 1}}>
                             <View style={globalContainerStyles.columnContainer}>
                                     <Text style={styles.counterHeader}>Speaker </Text>
+                                    <View style={{marginBottom: 10*vh}}/> 
+
                                     <TTCounterInput
                                         state={autoPoints.speaker}
                                         setState={(v) => setAutoPointParam("speaker", v)}
@@ -398,6 +401,8 @@ const ScoutTeam = ({route, navigation}) => {
                                 </View>
                                 <View style={globalContainerStyles.columnContainer}>
                                     <Text style={styles.counterHeader}>Speaker Misses</Text>
+                                                        <View style={{marginBottom: 10*vh}}/> 
+
                                     <TTCounterInput
                                         state={autoPoints.speakermiss}
                                         setState={(v) => setAutoPointParam("speakermiss", v)}
@@ -405,12 +410,16 @@ const ScoutTeam = ({route, navigation}) => {
                                     />
                                 </View>
                                 </View>
+                                <View style={{marginBottom: 5*vh}}/> 
+
                                 <View style={{...styles.rowAlignContainer, flexGrow: 1}}>
                                 </View>
                             {/* amp */}
                             <View style={{...styles.rowAlignContainer, flexGrow: 1}}>
                                 <View style={globalContainerStyles.columnContainer}>
                                     <Text style={styles.counterHeader}>Amp</Text>
+                                    <View style={{marginBottom: 10*vh}}/> 
+
                                     <TTCounterInput
                                         state={autoPoints.amp}
                                         setState={(v) => setAutoPointParam("amp", v)}
@@ -419,6 +428,8 @@ const ScoutTeam = ({route, navigation}) => {
                                 </View>
                                 <View style={globalContainerStyles.columnContainer}>
                                     <Text style={styles.counterHeader}>Amp Misses</Text>
+                                    <View style={{marginBottom: 10*vh}}/> 
+
                                     <TTCounterInput
                                         state={autoPoints.ampmiss}
                                         setState={(v) => setAutoPointParam("ampmiss", v)}
@@ -426,6 +437,7 @@ const ScoutTeam = ({route, navigation}) => {
                                     />
                                 </View>
                             </View>
+                            <View style={{marginBottom: 5*vh}}/> 
 
                             <View style={{...styles.rowAlignContainer, flexGrow: 1}}>
                                 <View style={globalContainerStyles.columnContainer}>
