@@ -19,8 +19,8 @@ const TeamAnalytics = ({route, navigation}) => {
     const [chartValue, setChartValue] = React.useState("Teleop Points");
     const [chartData, setChartData] = React.useState([]);
     const [chartLabels, setChartLabels] = React.useState([]);
-    const [firebaseURL,setFirebaseURL] = React.useState("");
-    const [subpath,setSubpath] = React.useState("");
+    const [firebaseURL, setFirebaseURL] = React.useState("");
+    const [subpath, setSubpath] = React.useState("");
 
     const checkEmptyComments = () => {
         for (const match of route.params.teamData) {
@@ -41,23 +41,8 @@ const TeamAnalytics = ({route, navigation}) => {
 
         return uri;
     }
+ 
 
-    const getClimbScore = (climbValue) => {
-
-        switch (climbValue){
-            case 0 :
-                return 0;
-            case 1 :
-                return 1;
-            case 2 :
-                return 3;
-            case 3 :
-                return 4;
-            default :
-                return 0;
-        }
-
-    }
 
     const checkForDNP = () => {
         for (const match of route.params.teamData) {
@@ -88,7 +73,7 @@ const TeamAnalytics = ({route, navigation}) => {
                 const points = route.params.teamData.map((md) => {
                     return 2*Number(md[11]) + 5*Number(md[9])+ 2*Number(md[7])
                     + 1*Number(md[16]) + 2*Number(md[13])+ 5*Number(md[14])
-                    + 5*Number(md[18]) + getClimbScore(Number(md[19]));
+                    + 5*Number(md[18]) + 1*(Number(md[19]) + 2*(Number(md[20])) + 4*(Number(md[21])) + 3*(Number(md[22])));
                 });
                 return points;
             } break;
@@ -112,7 +97,7 @@ const TeamAnalytics = ({route, navigation}) => {
             } break;
             case ("Endgame Points"): {
                 const count = route.params.teamData.map((md) => {
-                    return 5*Number(md[18]) + getClimbScore(Number(md[19]));
+                    return 5*Number(md[18]) + 1*(Number(md[19]) + 2*(Number(md[20])) + 4*(Number(md[21])) + 3*(Number(md[22])));
                 });
                 return count;
             } break;

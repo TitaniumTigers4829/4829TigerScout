@@ -308,17 +308,15 @@ const ScoutTeam = ({route, navigation}) => {
                     <View style={{...styles.rowAlignContainer, zIndex: 7}}>
                         {/* Team Number */}
                  
-                        <TTTextInput
+                        <TTNumberInput
                           state={teamNumber}
                           setState={setTeamNumber}
                           stateMax={9999}
                           maxLength={4}
                           placeholder="Team #"
                           placeholderTextColor={`${CS.light1}50`}
-                          style={[
-                            {...globalInputStyles.numberInput, width: "45%", height: "60%"},
-                            globalTextStyles.labelText
-                        ]}/>
+                          style={styles.topNumberInput}
+                        />
                            
                     </View>
 
