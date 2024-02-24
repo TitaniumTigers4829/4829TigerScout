@@ -565,15 +565,6 @@ const ScoutTeam = ({route, navigation}) => {
                             boxCheckedStyle={{...globalButtonStyles.checkboxCheckedStyle}}
                         />
                         <TTSimpleCheckbox 
-                            state={harmony}
-                            setState={setHarmony}
-                            text="Harmony" 
-                            overallStyle={{height: "100%", alignSelf: "center"}}
-                            textStyle={{...globalTextStyles.labelText}}
-                            boxUncheckedStyle={{...globalButtonStyles.checkboxUncheckedStyle}}
-                            boxCheckedStyle={{...globalButtonStyles.checkboxCheckedStyle}}
-                        />
-                        <TTSimpleCheckbox 
                             state={spotlit}
                             setState={setSpotlit}
                             text="Spotlit" 
@@ -582,6 +573,16 @@ const ScoutTeam = ({route, navigation}) => {
                             boxUncheckedStyle={{...globalButtonStyles.checkboxUncheckedStyle}}
                             boxCheckedStyle={{...globalButtonStyles.checkboxCheckedStyle}}
                         />
+                        <TTSimpleCheckbox 
+                            state={harmony}
+                            setState={setHarmony}
+                            text="Harmony" 
+                            overallStyle={{height: "100%", alignSelf: "center"}}
+                            textStyle={{...globalTextStyles.labelText}}
+                            boxUncheckedStyle={{...globalButtonStyles.checkboxUncheckedStyle}}
+                            boxCheckedStyle={{...globalButtonStyles.checkboxCheckedStyle}}
+                        />
+                        
 
                     </View>
                     <View style={{...styles.rowAlignContainer, zIndex: 4, flexGrow: 0.5}}>

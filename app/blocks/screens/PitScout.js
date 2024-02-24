@@ -145,8 +145,6 @@ const PitScout = ({route, navigation}) =>
             <KeyboardAvoidingView style={{flex: 1}} behavior="height">
             <ScrollView keyboardShouldPersistTaps='handled' ref={scrollRef}>
                 <View style={{height:70*vh, zIndex: 1}}>
-                    <Text style={styles.sectionHeader}>Pit Scout</Text>
-
                     <View style={{...styles.rowAlignContainer, zIndex: 7}}>
                         {/* ScouterName */}
 
@@ -222,9 +220,6 @@ const PitScout = ({route, navigation}) =>
                         />
                     </View>
                     
-
-
-                   
                    
 
                     <View style={{...styles.rowAlignContainer, zIndex: 8}}>
@@ -315,7 +310,6 @@ const PitScout = ({route, navigation}) =>
 
                     {/* Rudamentary spacer */}
 
-                    <View style={{marginBottom: 5*vh}}/> 
                 
                 <View style={{...globalContainerStyles.centerContainer, backgroundColor: "#00000000"}}>
                     <TTButton
