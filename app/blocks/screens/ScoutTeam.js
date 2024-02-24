@@ -551,6 +551,16 @@ const ScoutTeam = ({route, navigation}) => {
                             boxUncheckedStyle={{...globalButtonStyles.checkboxUncheckedStyle}}
                             boxCheckedStyle={{...globalButtonStyles.checkboxCheckedStyle}}
                         />
+                         <TTSimpleCheckbox 
+                            state={spotlit}
+                            setState={setSpotlit}
+                            text="Spotlit" 
+                            overallStyle={{height: "100%", alignSelf: "center"}}
+                            textStyle={{...globalTextStyles.labelText}}
+                            boxUncheckedStyle={{...globalButtonStyles.checkboxUncheckedStyle}}
+                            boxCheckedStyle={{...globalButtonStyles.checkboxCheckedStyle}}
+                        />
+                        
                     <TTSimpleCheckbox 
                             state={trap}
                             setState={setTrap}
@@ -576,16 +586,7 @@ const ScoutTeam = ({route, navigation}) => {
                             boxUncheckedStyle={{...globalButtonStyles.checkboxUncheckedStyle}}
                             boxCheckedStyle={{...globalButtonStyles.checkboxCheckedStyle}}
                         />
-                        <TTSimpleCheckbox 
-                            state={spotlit}
-                            setState={setSpotlit}
-                            text="Spotlit" 
-                            overallStyle={{height: "100%", alignSelf: "center"}}
-                            textStyle={{...globalTextStyles.labelText}}
-                            boxUncheckedStyle={{...globalButtonStyles.checkboxUncheckedStyle}}
-                            boxCheckedStyle={{...globalButtonStyles.checkboxCheckedStyle}}
-                        />
-                        <TTSimpleCheckbox 
+                       <TTSimpleCheckbox 
                             state={harmony}
                             setState={setHarmony}
                             text="Harmony" 

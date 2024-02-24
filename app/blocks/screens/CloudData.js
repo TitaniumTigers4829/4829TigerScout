@@ -375,34 +375,7 @@ const CloudData = ({route, navigation}) => {
                         zIndex={8}
                     />
                 </View>  
-                <View style={{flexDirection: "row", justifyContent: "space-evenly", marginTop: 1*vh, zIndex: 4}}>
-                    <Text style={globalTextStyles.labelText}> Filter By Match...</Text>
-                    <TTButton 
-                        text="+"
-                        buttonStyle={{...globalButtonStyles.primaryButton, width: 7*vh, aspectRatio: 1, margin: 2*vh}}
-                        textStyle={{color: CS.light1, fontSize: 32*fU, marginTop: (Platform.OS !== 'ios') ? -1.5*vh : -1.3*vh }}
-                        onPress={() => onPress(+1)} />
-                    <TTNumberInput
-                        state={filterBy}
-                        setState={(value) => {
-                            setFilterBy(value);
-                            const filterKey = value;
-                            const sortKey = sortableKeys[sortableValues.indexOf(sortBy)];
-                            const newTeamOrder = getSortedObjectOrder(cloudData, statistics, sortKey, reverseSort, filterKey);
-                            setTeamOrder(newTeamOrder);
-                        }} 
-                        style={[
-                            {...globalInputStyles.numberInput, width: 15*vw, height: 5*vh},
-                            globalTextStyles.labelText
-                        ]}
-                    />
-                    <TTButton 
-                        text="-"
-                        buttonStyle={{...globalButtonStyles.primaryButton, width: 7*vh, aspectRatio: 1, margin: 2*vh}}
-                        textStyle={{color: CS.light1, fontSize: 32*fU, marginTop: (Platform.OS !== 'ios') ? -1.5*vh : -1.3*vh  }}
-                        onPress={() => onPress(-1)} />
-                </View>
-              
+                
                 <TTSimpleCheckbox 
                     state={reverseSort}
                     setState={(value) => {
