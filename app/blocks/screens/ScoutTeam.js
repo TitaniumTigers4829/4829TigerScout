@@ -12,7 +12,7 @@ import { serializeData, deserializeData, compressData, decompressData, saveMatch
 import { TTGradient } from '../components/ExtraComponents';
 import { ColorScheme as CS } from '../../common/ColorScheme';
 
-const matchTypeValues = ["Practice", "Qualifiers", "Finals"];
+const matchTypeValues = ["Practice", "Quals", "Finals"];
 const teamColorValues = ["Red", "Blue"];
 const deviceValues = ["Blue 1","Blue 2","Blue 3","Red 1","Red 2","Red 3"];
 

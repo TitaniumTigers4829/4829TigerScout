@@ -16,7 +16,7 @@ const chartableValues = ["Auto Points", "Teleop Points", "Speaker", "Amp", "Miss
 const TeamAnalytics = ({route, navigation}) => {
 
     // States
-    const [chartValue, setChartValue] = React.useState("Teleop Points");
+    const [chartValue, setChartValue] = React.useState("Total Points");
     const [chartData, setChartData] = React.useState([]);
     const [chartLabels, setChartLabels] = React.useState([]);
     const [firebaseURL, setFirebaseURL] = React.useState("");
@@ -118,7 +118,7 @@ const TeamAnalytics = ({route, navigation}) => {
 
     React.useEffect(() => {
         const matchAbbreviations = route.params.teamData.map((item) => {
-            return `${matchTypeValues[item[5]][1]}${item[4]}`;
+            return `${matchTypeValues[item[5]]} ${item[4]}`;
         });
         setChartLabels(matchAbbreviations);        
         setChartData(getSpecificData("Teleop Points"));

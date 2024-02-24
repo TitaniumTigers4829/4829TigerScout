@@ -172,7 +172,29 @@ const PitScout = ({route, navigation}) =>
                             style={styles.topNumberInput}
                         />
                     </View>
-                    
+                    <View style={{...styles.rowAlignContainer, zIndex: 9}}>
+
+                        <TTNumberInput
+                            state={batteries}
+                            setState={setBatteries}
+                            stateMax={99}
+                            maxLength={2}
+                            placeholder="Battery #"
+                            placeholderTextColor={`${CS.light1}50`}
+                            style={styles.topNumberInput}
+                        />
+
+                        <TTNumberInput
+                            state={weight}
+                            setState={setWeight}
+                            stateMax={125}
+                            maxLength={3}
+                            placeholder="Weight"
+                            placeholderTextColor={`${CS.light1}50`}
+                            style={styles.topNumberInput}
+                        />
+                        </View>
+
                     <View style={{...styles.rowAlignContainer, zIndex: 10}}>
 
                     {/* drive Train */}
@@ -200,37 +222,52 @@ const PitScout = ({route, navigation}) =>
                         />
                     </View>
                     
-                    <View style={{...styles.rowAlignContainer, zIndex: 9}}>
 
-                        <TTNumberInput
-                            state={batteries}
-                            setState={setBatteries}
-                            stateMax={99}
-                            maxLength={2}
-                            placeholder="Battery #"
-                            placeholderTextColor={`${CS.light1}50`}
-                            style={styles.topNumberInput}
+
+                   
+                   
+
+                    <View style={{...styles.rowAlignContainer, zIndex: 8}}>
+
+                    {/* climb */}
+                    <TTDropdown 
+                            state={climb} 
+                            setState={setClimb} 
+                            items={climbValues}
+                            boxWidth={40*vw}
+                            boxHeight={5*vh}
+                            boxStyle={globalInputStyles.dropdownInput}
+                            textStyle={globalTextStyles.labelText}
+                            zIndex={7}
                         />
-                        
-                        <TTNumberInput
-                            state={weight}
-                            setState={setWeight}
-                            stateMax={125}
-                            maxLength={3}
-                            placeholder="Weight"
-                            placeholderTextColor={`${CS.light1}50`}
-                            style={styles.topNumberInput}
+                    
+                    {/* shooting locations */}
+                        <TTDropdown 
+                            state={shootingLocation} 
+                            setState={setShootingLocations} 
+                            items={ShootingLocationValues}
+                            boxWidth={40*vw}
+                            boxHeight={5*vh}
+                            boxStyle={globalInputStyles.dropdownInput}
+                            textStyle={globalTextStyles.labelText}
+                            zIndex={7}
                         />
                     </View>
-
-
-                   
-                   
-
-                    <View style={{...styles.rowAlignContainer, zIndex: 7}}>
-
-                    {/* human player */}
-                       
+                    <View style={{...styles.rowAlignContainer, zIndex: 6}}>
+                       {/* trap */}
+                       <TTDropdown 
+                            state={trap} 
+                            setState={setTrap} 
+                            items={trapValues}
+                            boxWidth={40*vw}
+                            boxHeight={5*vh}
+                            boxStyle={globalInputStyles.dropdownInput}
+                            textStyle={globalTextStyles.labelText}
+                            zIndex={6}
+                        />
+                        </View>
+                    
+                    <View style={{...styles.rowAlignContainer, zIndex: 5}}>                       
 
                     {/* under stage */}
                         <TTSimpleCheckbox 
@@ -252,49 +289,10 @@ const PitScout = ({route, navigation}) =>
                             boxUncheckedStyle={{...globalButtonStyles.checkboxUncheckedStyle}}
                             boxCheckedStyle={{...globalButtonStyles.checkboxCheckedStyle}}
                         />
-                 
+
 
                     </View>
-                    <View style={{...styles.rowAlignContainer, zIndex: 6}}>
-                       {/* trap */}
-                       <TTDropdown 
-                            state={trap} 
-                            setState={setTrap} 
-                            items={trapValues}
-                            boxWidth={40*vw}
-                            boxHeight={5*vh}
-                            boxStyle={globalInputStyles.dropdownInput}
-                            textStyle={globalTextStyles.labelText}
-                            zIndex={5}
-                        />
-                        </View>
-                    <View style={{...styles.rowAlignContainer, zIndex: 6}}>
 
-                    {/* climb */}
-                    <TTDropdown 
-                            state={climb} 
-                            setState={setClimb} 
-                            items={climbValues}
-                            boxWidth={40*vw}
-                            boxHeight={5*vh}
-                            boxStyle={globalInputStyles.dropdownInput}
-                            textStyle={globalTextStyles.labelText}
-                            zIndex={5}
-                        />
-                    
-                    {/* shooting locations */}
-                        <TTDropdown 
-                            state={shootingLocation} 
-                            setState={setShootingLocations} 
-                            items={ShootingLocationValues}
-                            boxWidth={40*vw}
-                            boxHeight={5*vh}
-                            boxStyle={globalInputStyles.dropdownInput}
-                            textStyle={globalTextStyles.labelText}
-                            zIndex={6}
-                        />
-                    </View>
-                
 
                 </View>
 
@@ -302,7 +300,7 @@ const PitScout = ({route, navigation}) =>
                         <TTTextInput
                             state={comments}
                             setState={setComments}
-                            placeholder="Comments/Assistance Needed? (1000 characters)"
+                            placeholder="Comments"
                             placeholderTextColor={`${CS.light1}50`}
                             multiline={true}
                             maxLength={1000}
