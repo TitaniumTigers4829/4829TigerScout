@@ -404,18 +404,9 @@ const ScoutTeam = ({route, navigation}) => {
                                         {...cubeCounterSettings}
                                     />
                                 </View>
-                                <View style={globalContainerStyles.columnContainer}>
-                                    <TTSimpleCheckbox 
-                                        state={leave}
-                                        setState={setLeave}
-                                        text="Taxi    " 
-                                        overallStyle={{height: "100%", alignSelf: "center"}}
-                                        textStyle={{...globalTextStyles.labelText, fontSize: 12*fU}}
-                                        boxUncheckedStyle={{...globalButtonStyles.checkboxUncheckedStyle}}
-                                        boxCheckedStyle={{...globalButtonStyles.checkboxCheckedStyle}}
-                                    />
                                 </View>
-                            </View>
+                                <View style={{...styles.rowAlignContainer, flexGrow: 1}}>
+                                </View>
                             {/* amp */}
                             <View style={{...styles.rowAlignContainer, flexGrow: 1}}>
                                 <View style={globalContainerStyles.columnContainer}>
@@ -434,6 +425,9 @@ const ScoutTeam = ({route, navigation}) => {
                                         {...coneCounterSettings}
                                     />
                                 </View>
+                            </View>
+
+                            <View style={{...styles.rowAlignContainer, flexGrow: 1}}>
                                 <View style={globalContainerStyles.columnContainer}>
                                     <TTSimpleCheckbox 
                                         state={centerlineNoteScored}
@@ -445,7 +439,20 @@ const ScoutTeam = ({route, navigation}) => {
                                         boxCheckedStyle={{...globalButtonStyles.checkboxCheckedStyle}}
                                     />
                                 </View>
+                                <View style={globalContainerStyles.columnContainer}>
+                                    <TTSimpleCheckbox 
+                                        state={leave}
+                                        setState={setLeave}
+                                        text="Taxi    " 
+                                        overallStyle={{height: "100%", alignSelf: "center"}}
+                                        textStyle={{...globalTextStyles.labelText, fontSize: 12*fU}}
+                                        boxUncheckedStyle={{...globalButtonStyles.checkboxUncheckedStyle}}
+                                        boxCheckedStyle={{...globalButtonStyles.checkboxCheckedStyle}}
+                                    />
+                                </View>
+                            
                             </View>
+
                         </View>
                     </View>
                 </View>
@@ -498,7 +505,8 @@ const ScoutTeam = ({route, navigation}) => {
                                         setState={(v) => setTelePointParam("amp", v)}
                                         {...coneCounterSettings}
                                     />
-                                </View>
+                                </View>                               
+                                
                                 <View style={globalContainerStyles.columnContainer}>
                                     <Text style={styles.counterHeader}>Amp Misses</Text>
                                     <TTCounterInput
@@ -506,8 +514,6 @@ const ScoutTeam = ({route, navigation}) => {
                                         setState={(v) => setTelePointParam("ampmiss", v)}
                                         {...coneCounterSettings}
                                     />
-                                </View>
-                                <View style={globalContainerStyles.columnContainer}>
                                 </View>
                             </View>
                         </View>
