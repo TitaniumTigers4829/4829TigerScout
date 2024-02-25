@@ -270,29 +270,22 @@ const ScoutTeam = ({route, navigation}) => {
     const scrollRef = React.useRef(null);
 
     // Ugly but necessary
-    const counterSettings = {
+    
+    const missCounterSettings = {
         stateMin: 0,
         stateMax: 99,
         overallStyle: {justifySelf: "center", marginTop: 7*vh},
-        topButtonProps: {text: "+", buttonStyle: [globalButtonStyles.topCounterButton, {height: 8.5*vh, padding: 0}], textStyle: globalTextStyles.primaryText},
+        topButtonProps: {text: "+", buttonStyle: [{...globalButtonStyles.topCounterButton, backgroundColor: CS.accent1}, {height: 8.5*vh, padding: 0}], textStyle: globalTextStyles.primaryText},
         inputProps: {style: [globalInputStyles.numberInput, globalTextStyles.labelText, {width: "80%", height: "25%", margin: 0}]},
-        bottomButtonProps: {text: "-", buttonStyle: [globalButtonStyles.bottomCounterButton, {height: 8.5*vh, padding: 0}], textStyle: globalTextStyles.primaryText}
+        bottomButtonProps: {text: "-", buttonStyle: [{...globalButtonStyles.bottomCounterButton, backgroundColor: CS.accent1}, {height: 8.5*vh, padding: 0}], textStyle: globalTextStyles.primaryText}
     }
-    const cubeCounterSettings = {
+    const scoreCounterSettings = {
         stateMin: 0,
         stateMax: 99,
         overallStyle: {justifySelf: "center", marginTop: 7*vh},
         topButtonProps: {text: "+", buttonStyle: [{...globalButtonStyles.topCounterButton, backgroundColor: CS.cube}, {height: 8.5*vh, padding: 0}], textStyle: globalTextStyles.primaryText},
         inputProps: {style: [globalInputStyles.numberInput, globalTextStyles.labelText, {width: "80%", height: "25%", margin: 0}]},
         bottomButtonProps: {text: "-", buttonStyle: [{...globalButtonStyles.bottomCounterButton, backgroundColor: CS.cube}, {height: 8.5*vh, padding: 0}], textStyle: globalTextStyles.primaryText}
-    }
-    const coneCounterSettings = {
-        stateMin: 0,
-        stateMax: 99,
-        overallStyle: {justifySelf: "center", marginTop: 7*vh},
-        topButtonProps: {text: "+", buttonStyle: [{...globalButtonStyles.topCounterButton, backgroundColor: CS.cone}, {height: 8.5*vh, padding: 0}], textStyle: globalTextStyles.primaryText},
-        inputProps: {style: [globalInputStyles.numberInput, globalTextStyles.labelText, {width: "80%", height: "25%", margin: 0}]},
-        bottomButtonProps: {text: "-", buttonStyle: [{...globalButtonStyles.bottomCounterButton, backgroundColor: CS.cone}, {height: 8.5*vh, padding: 0}], textStyle: globalTextStyles.primaryText}
     }
 
     return (
@@ -396,17 +389,17 @@ const ScoutTeam = ({route, navigation}) => {
                                     <TTCounterInput
                                         state={autoPoints.speaker}
                                         setState={(v) => setAutoPointParam("speaker", v)}
-                                        {...cubeCounterSettings}
+                                        {...scoreCounterSettings}
                                     />
                                 </View>
                                 <View style={globalContainerStyles.columnContainer}>
-                                    <Text style={styles.counterHeader}>Speaker Misses</Text>
-                                                        <View style={{marginBottom: 10*vh}}/> 
+                                    <Text style={styles.counterHeader}>Amp</Text>
+                                    <View style={{marginBottom: 10*vh}}/> 
 
                                     <TTCounterInput
-                                        state={autoPoints.speakermiss}
-                                        setState={(v) => setAutoPointParam("speakermiss", v)}
-                                        {...cubeCounterSettings}
+                                        state={autoPoints.amp}
+                                        setState={(v) => setAutoPointParam("amp", v)}
+                                        {...scoreCounterSettings}
                                     />
                                 </View>
                                 </View>
@@ -416,16 +409,18 @@ const ScoutTeam = ({route, navigation}) => {
                                 </View>
                             {/* amp */}
                             <View style={{...styles.rowAlignContainer, flexGrow: 1}}>
+                                
                                 <View style={globalContainerStyles.columnContainer}>
-                                    <Text style={styles.counterHeader}>Amp</Text>
-                                    <View style={{marginBottom: 10*vh}}/> 
+                                    <Text style={styles.counterHeader}>Speaker Misses</Text>
+                                                        <View style={{marginBottom: 10*vh}}/> 
 
                                     <TTCounterInput
-                                        state={autoPoints.amp}
-                                        setState={(v) => setAutoPointParam("amp", v)}
-                                        {...coneCounterSettings}
+                                        state={autoPoints.speakermiss}
+                                        setState={(v) => setAutoPointParam("speakermiss", v)}
+                                        {...missCounterSettings}
                                     />
                                 </View>
+                                
                                 <View style={globalContainerStyles.columnContainer}>
                                     <Text style={styles.counterHeader}>Amp Misses</Text>
                                     <View style={{marginBottom: 10*vh}}/> 
@@ -433,7 +428,7 @@ const ScoutTeam = ({route, navigation}) => {
                                     <TTCounterInput
                                         state={autoPoints.ampmiss}
                                         setState={(v) => setAutoPointParam("ampmiss", v)}
-                                        {...coneCounterSettings}
+                                        {...missCounterSettings}
                                     />
                                 </View>
                             </View>
@@ -488,7 +483,7 @@ const ScoutTeam = ({route, navigation}) => {
                                     <TTCounterInput
                                         state={telePoints.speaker}
                                         setState={(v) => setTelePointParam("speaker", v)}
-                                        {...cubeCounterSettings}
+                                        {...scoreCounterSettings}
                                     />
                                 </View>
                                 <View style={globalContainerStyles.columnContainer}>
@@ -496,35 +491,37 @@ const ScoutTeam = ({route, navigation}) => {
                                     <TTCounterInput
                                         state={telePoints.amplifiedSpeaker}
                                         setState={(v) => setTelePointParam("amplifiedSpeaker", v)}
-                                        {...cubeCounterSettings}
+                                        {...scoreCounterSettings}
                                     />
                                 </View>
-                                <View style={globalContainerStyles.columnContainer}>
-                                    <Text style={styles.counterHeader}>Speaker Misses</Text>
-                                    <TTCounterInput
-                                        state={telePoints.speakermiss}
-                                        setState={(v) => setTelePointParam("speakermiss", v)}
-                                        {...cubeCounterSettings}
-                                    />
-                                </View>
-                            </View>
-                            {/* amp */}
-                            <View style={{...styles.rowAlignContainer, flexGrow: 1}}>
                                 <View style={globalContainerStyles.columnContainer}>
                                     <Text style={styles.counterHeader}>Amp</Text>
                                     <TTCounterInput
                                         state={telePoints.amp}
                                         setState={(v) => setTelePointParam("amp", v)}
-                                        {...coneCounterSettings}
+                                        {...scoreCounterSettings}
                                     />
-                                </View>                               
+                                </View>    
                                 
+                            </View>
+                            {/* amp */}
+                            <View style={{...styles.rowAlignContainer, flexGrow: 1}}>
+                                                    
+                                
+                            <View style={globalContainerStyles.columnContainer}>
+                                    <Text style={styles.counterHeader}>Speaker Misses</Text>
+                                    <TTCounterInput
+                                        state={telePoints.speakermiss}
+                                        setState={(v) => setTelePointParam("speakermiss", v)}
+                                        {...missCounterSettings}
+                                    />
+                                </View>
                                 <View style={globalContainerStyles.columnContainer}>
                                     <Text style={styles.counterHeader}>Amp Misses</Text>
                                     <TTCounterInput
                                         state={telePoints.ampmiss}
                                         setState={(v) => setTelePointParam("ampmiss", v)}
-                                        {...coneCounterSettings}
+                                        {...missCounterSettings}
                                     />
                                 </View>
                             </View>
