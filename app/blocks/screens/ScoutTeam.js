@@ -376,7 +376,8 @@ const ScoutTeam = ({route, navigation}) => {
                     <TTGradient/>
 
                     <Text style={styles.sectionHeader}>Auto</Text>
-                    
+                    <View style={{marginBottom: 6*vh}}/> 
+
                     <View style={{...styles.rowAlignContainer, flexGrow: 1}}>
                         <View style={{...globalContainerStyles.columnContainer, flexGrow: 3}}>
                             {/* speaker */}
@@ -432,7 +433,7 @@ const ScoutTeam = ({route, navigation}) => {
                                     />
                                 </View>
                             </View>
-                            <View style={{marginBottom: 5*vh}}/> 
+                            <View style={{marginBottom: 8*vh}}/> 
 
                             <View style={{...styles.rowAlignContainer, flexGrow: 1}}>
                                 <View style={globalContainerStyles.columnContainer}>
