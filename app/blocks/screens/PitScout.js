@@ -193,7 +193,7 @@ const PitScout = ({route, navigation}) =>
                         />
                         </View>
 
-                    <View style={{...styles.rowAlignContainer, zIndex: 10}}>
+                    <View style={{...styles.rowAlignContainer, zIndex: 9}}>
 
                     {/* drive Train */}
                         <TTDropdown 
@@ -204,7 +204,7 @@ const PitScout = ({route, navigation}) =>
                             boxHeight={5*vh}
                             boxStyle={globalInputStyles.dropdownInput}
                             textStyle={globalTextStyles.labelText}
-                            zIndex={5}
+                            zIndex={8}
                         />
 
                     {/* Motor */}
@@ -216,7 +216,7 @@ const PitScout = ({route, navigation}) =>
                             boxHeight={5*vh}
                             boxStyle={globalInputStyles.dropdownInput}
                             textStyle={globalTextStyles.labelText}
-                            zIndex={6}
+                            zIndex={8}
                         />
                     </View>
                     
